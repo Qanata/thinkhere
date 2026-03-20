@@ -4050,11 +4050,10 @@
         const banner = document.createElement("div");
         banner.className = "iphone-unsupported-banner";
         banner.innerHTML = `
-          <strong>iPhone not supported</strong><br>
-          Running AI models locally requires more memory than iPhone browsers currently allow.
-          Safari enforces strict per-tab memory limits that prevent models from loading.<br><br>
+          <strong>Limited iPhone support</strong><br>
+          Most models require more memory than iPhone browsers allow.
+          Small models marked as compatible may work on newer iPhones (15+) with iOS 18+.<br><br>
           For the best experience, use a <strong>laptop or desktop</strong> with Chrome or Edge.
-          iPads with M-series chips may also work.
         `;
         grid.parentNode.insertBefore(banner, grid);
       }
@@ -4068,7 +4067,7 @@
         let deviceIncompat = false;
         let deviceIncompatReason = "";
         if (dp) {
-          if (dp.isIPhone) {
+          if (dp.isIPhone && m.mobileOk !== true) {
             deviceIncompat = true;
             deviceIncompatReason = "Not supported on iPhone — insufficient browser memory";
           } else if (m.mobileOk === false && (dp.isMobile || dp.isTablet)) {
