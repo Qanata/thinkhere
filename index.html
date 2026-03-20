@@ -4050,10 +4050,12 @@
         const banner = document.createElement("div");
         banner.className = "iphone-unsupported-banner";
         banner.innerHTML = `
-          <strong>Limited iPhone support</strong><br>
-          Most models require more memory than iPhone browsers allow.
-          Small models marked as compatible may work on newer iPhones (15+) with iOS 18+.<br><br>
+          <strong>iPhone not supported</strong><br>
+          iOS Safari enforces strict per-tab memory limits (~3–4 GB) that prevent even small AI models
+          from loading — the browser silently kills the page before inference can start.
+          Android browsers allocate memory more freely, letting models run on comparable hardware.<br><br>
           For the best experience, use a <strong>laptop or desktop</strong> with Chrome or Edge.
+          iPads with M-series chips may also work.
         `;
         grid.parentNode.insertBefore(banner, grid);
       }
@@ -4067,7 +4069,7 @@
         let deviceIncompat = false;
         let deviceIncompatReason = "";
         if (dp) {
-          if (dp.isIPhone && m.mobileOk !== true) {
+          if (dp.isIPhone) {
             deviceIncompat = true;
             deviceIncompatReason = "Not supported on iPhone — insufficient browser memory";
           } else if (m.mobileOk === false && (dp.isMobile || dp.isTablet)) {
