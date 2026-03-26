@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — ThinkHere | Private AI in Your Browser</title>
+  <meta name="description" content="News, updates, and technical deep dives from the ThinkHere team. Learn about in-browser AI, WebGPU, and private language models.">
+  <meta property="og:title" content="Introducing ThinkHere — Private AI That Runs in Your Browser">
+  <meta property="og:description" content="We built an AI chat tool that runs entirely in your browser. No cloud, no servers, no data collection. Here's why and how.">
+  <meta property="og:type" content="article">
+  <meta name="author" content="ThinkHere Team">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Blog Page Styles ── */
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: 0 24px;
+      overflow-y: auto;
+    }
+
+    /* Blog index header */
+    .blog-header {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .blog-header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .blog-header p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    /* Post card on index */
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 40px;
+      transition: border-color 0.2s ease;
+    }
+
+    .post-card:hover {
+      border-color: var(--accent-dim);
+    }
+
+    .post-meta {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-faint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .post-card h2 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .post-card h2 a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .post-card h2 a:hover {
+      color: var(--accent);
+    }
+
+    .post-excerpt {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .read-more {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: opacity 0.2s ease;
+    }
+
+    .read-more:hover {
+      opacity: 0.8;
+    }
+
+    /* Full post */
+    .post-full {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 0 60px;
+    }
+
+    .post-full .post-meta {
+      margin-bottom: 16px;
+    }
+
+    .post-full h1 {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 32px;
+    }
+
+    .post-full h2 {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin: 36px 0 16px;
+      color: var(--text);
+    }
+
+    .post-full p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin-bottom: 18px;
+    }
+
+    .post-full strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .post-full a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .post-full a:hover {
+      opacity: 0.8;
+    }
+
+    .post-full ul {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin: 0 0 18px 24px;
+    }
+
+    .post-full li {
+      margin-bottom: 6px;
+    }
+
+    .post-full .highlight {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 24px 0;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* CTA box */
+    .post-cta {
+      background: var(--surface);
+      border: 1px solid var(--accent-dim);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .post-cta p {
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .post-cta .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 100px;
+      color: var(--bg);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: #d4ff7e;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 100px;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--accent-dim);
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* Footer */
+    .page-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-faint);
+      letter-spacing: 0.04em;
+    }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      .blog-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .post-full h1 {
+        font-size: 1.6rem;
+      }
+
+      .post-card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-wrap">
+    <header>
+      <a class="logo" href="/">Think<span>Here</span></a>
+      <div class="header-right">
+        <a class="header-nav" href="about.html">About</a>
+        <a class="header-nav" href="blog.html">Blog</a>
+        <a class="header-nav" href="docs.html">Docs</a>
+        <a class="auth-btn sign-in" href="#" onclick="signIn(); return false;">Sign In</a>
+        <a class="auth-btn create-account" href="#" onclick="signUp(); return false;">Create Account</a>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Blog Header -->
+      <div class="blog-header">
+        <h1>Blog</h1>
+        <p>Updates, announcements, and technical deep dives from the ThinkHere team.</p>
+      </div>
+
+      <!-- Post Preview Card -->
+      <article class="post-card">
+        <div class="post-meta">March 2026</div>
+        <h2><a href="#post-launch">Introducing ThinkHere &mdash; Private AI That Runs in Your Browser</a></h2>
+        <p class="post-excerpt">We built an AI assistant that runs entirely on your hardware. No cloud servers, no data collection, no API keys. Here is why we think local-first AI matters, and how we made it work with WebGPU and MediaPipe.</p>
+        <a class="read-more" href="#post-launch">Read more &rarr;</a>
+      </article>
+
+      <!-- Full Post -->
+      <article class="post-full" id="post-launch">
+        <div class="post-meta">March 2026 &middot; 5 min read</div>
+        <h1>Introducing ThinkHere &mdash; Private AI That Runs in Your Browser</h1>
+
+        <p>Today we are launching <strong>ThinkHere</strong>, an AI chat application that runs entirely in your web browser. There is no server processing your prompts, no cloud storing your conversations, and no company reading your data. When you use ThinkHere, the language model runs on your own hardware, and your words never leave your device.</p>
+
+        <p>We believe this is how AI tools should work by default. And thanks to recent advances in browser technology, it is now practical to deliver that experience without asking users to install anything at all.</p>
+
+        <h2>The privacy problem with cloud AI</h2>
+
+        <p>Most AI chat tools work the same way: you type a prompt, it gets sent to a server, a model generates a response, and the server sends it back. Along the way, your prompt is transmitted over the internet, processed on hardware you do not control, and often stored in logs you cannot access or delete.</p>
+
+        <p>For casual questions, this might feel acceptable. But the moment you ask an AI to help with medical information, legal documents, financial planning, personal journal entries, or proprietary business data, the calculus changes entirely. You are trusting a third party with sensitive information, often without a clear understanding of how that data will be retained, used for training, or shared.</p>
+
+        <p>ThinkHere eliminates this tradeoff. <strong>Your prompts and responses never leave the browser tab.</strong> There is no network request carrying your conversation to a remote server. The model weights are downloaded once and cached locally, and every inference operation runs on your device's GPU via WebGPU. If you close the tab, the conversation exists nowhere but in your browser's local storage.</p>
+
+        <h2>How in-browser AI actually works</h2>
+
+        <p>Running a language model in a browser tab sounds improbable, but the underlying technology is mature and well-supported. ThinkHere is built on two key pieces of infrastructure:</p>
+
+        <ul>
+          <li><strong>WebGPU</strong> is a modern browser API that provides low-level access to the GPU. Unlike WebGL, which was designed for graphics rendering, WebGPU is built for general-purpose compute workloads, including the matrix multiplications that power neural network inference. Chrome, Edge, and Safari all ship with WebGPU support.</li>
+          <li><strong>MediaPipe LLM Inference API</strong> is Google's framework for running large language models on edge devices. It handles model loading, tokenization, context management, and inference scheduling. ThinkHere uses MediaPipe to orchestrate the entire pipeline inside the browser.</li>
+        </ul>
+
+        <p>When you first load a model in ThinkHere, the browser downloads the model weights (typically 1 to 3 GB depending on the model). These weights are stored in the browser's Cache Storage API, so you only download them once. On subsequent visits, the model loads from the local cache in a matter of seconds. From there, MediaPipe compiles the model for your specific GPU using WebGPU shader compilation, and inference runs natively on your hardware.</p>
+
+        <div class="highlight">
+          Download weights &rarr; Cache locally &rarr; Compile for your GPU &rarr; Run inference &rarr; Output stays on device
+        </div>
+
+        <p>The result is a fully functional AI assistant running in a browser tab, with generation speeds that are practical for real conversations. On a modern laptop with a discrete or integrated GPU, you can expect anywhere from 10 to 30+ tokens per second depending on the model and hardware.</p>
+
+        <h2>The tier system</h2>
+
+        <p>ThinkHere is free to use, and we want to keep it that way for the core experience. Here is how our tiers work:</p>
+
+        <ul>
+          <li><strong>Free (no account required):</strong> You can load and chat with Gemma 3n E2B immediately, with no sign-up. This is a capable, multimodal model that supports image input. You get a clean chat interface with no strings attached.</li>
+          <li><strong>Logged in (free account):</strong> Creating a free account unlocks the full model library (nine models and growing), system prompts, temperature and generation controls, conversation history, export, knowledge base with RAG, and file upload as context. The account is free and always will be.</li>
+          <li><strong>Paid (coming soon):</strong> We are designing a paid tier that will include priority support and premium features as we develop them. Details will be announced when it is ready.</li>
+        </ul>
+
+        <p>Importantly, <strong>all tiers run the model locally in your browser</strong>. The account system manages preferences, settings, and feature access, but the core AI inference is always happening on your hardware. We never see your conversations regardless of which tier you are on.</p>
+
+        <h2>Device requirements</h2>
+
+        <p>Because ThinkHere runs on your local hardware, device capability matters. Here is what you need:</p>
+
+        <ul>
+          <li><strong>Browser:</strong> Chrome 113+, Edge 113+, or Safari 18+ with WebGPU enabled</li>
+          <li><strong>RAM:</strong> At least 6 GB for the smallest model (Gemma 3n E2B). Larger models need more.</li>
+          <li><strong>Best experience:</strong> Desktop or laptop with a dedicated or integrated GPU</li>
+          <li><strong>iPhone:</strong> Not currently supported due to iOS memory limits that prevent model loading</li>
+          <li><strong>iPad:</strong> M-series iPads may work, though the experience varies</li>
+        </ul>
+
+        <p>We are actively working to expand device support as browser capabilities and model efficiency improve. The trend is in our direction: models are getting smaller and more efficient, and WebGPU support is spreading to more devices.</p>
+
+        <h2>What comes next</h2>
+
+        <p>ThinkHere is open source under the MIT license, and we are building it in the open. Our near-term roadmap includes expanding the model library, improving generation speed, adding more document and context features for the logged-in tier, and designing the paid tier based on community feedback.</p>
+
+        <p>We think private, local-first AI is not a niche preference but an inevitability. As models become more capable at smaller sizes, and as hardware acceleration in browsers continues to mature, running AI on your own device will be the default, not the exception. ThinkHere is our bet on that future.</p>
+
+        <div class="post-cta">
+          <p>Ready to try private AI that runs in your browser?</p>
+          <div class="cta-buttons">
+            <a class="btn-primary" href="index.html">Try ThinkHere now</a>
+            <a class="btn-secondary" href="#" onclick="signUp(); return false;">Create a free account</a>
+          </div>
+        </div>
+
+      </article>
+
+    </div>
+
+    <footer class="page-footer">
+      &copy; 2026 ThinkHere. MIT License.
+    </footer>
+  </div>
+
+  <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>

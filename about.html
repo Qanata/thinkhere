@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — ThinkHere | Private AI in Your Browser</title>
+  <meta name="description" content="ThinkHere runs AI entirely in your browser. No servers, no API keys, no data leaves your device. Learn how it works.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── About Page Styles ── */
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: 0 24px;
+      overflow-y: auto;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: 2.8rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .hero .tagline {
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Section titles */
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* Cards */
+    .cards-section {
+      padding: 40px 0 60px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent-dim);
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-glow);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* How It Works */
+    .how-section {
+      padding: 40px 0 60px;
+    }
+
+    .how-description {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .flow-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .flow-step .step-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .flow-step .step-text {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .flow-arrow {
+      color: var(--accent-dim);
+      font-size: 1.4rem;
+      padding: 0 12px;
+      font-family: var(--font-mono);
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 40px 0 80px;
+    }
+
+    .cta-section p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 100px;
+      color: var(--bg);
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #d4ff7e;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 100px;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--accent-dim);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* Footer */
+    .page-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-faint);
+      letter-spacing: 0.04em;
+    }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-diagram {
+        flex-direction: column;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+        padding: 8px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-wrap">
+    <header>
+      <a class="logo" href="/">Think<span>Here</span></a>
+      <div class="header-right">
+        <a class="header-nav" href="about.html">About</a>
+        <a class="header-nav" href="blog.html">Blog</a>
+        <a class="header-nav" href="docs.html">Docs</a>
+        <a class="auth-btn sign-in" href="#" onclick="signIn(); return false;">Sign In</a>
+        <a class="auth-btn create-account" href="#" onclick="signUp(); return false;">Create Account</a>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Hero -->
+      <section class="hero">
+        <h1>Run AI <em>entirely</em> in your browser</h1>
+        <p class="tagline">Your conversations never leave your device. No servers, no API keys, no telemetry. Just you and a model running on your own hardware.</p>
+      </section>
+
+      <!-- Why ThinkHere? -->
+      <section class="cards-section">
+        <h2 class="section-title">Why <em>ThinkHere</em>?</h2>
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <h3>Privacy First</h3>
+            <p>Your data never leaves your device. Every conversation, every prompt, every response stays in your browser. There is no server to breach because there is no server at all.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h3>Zero Infrastructure</h3>
+            <p>No servers to manage, no API keys to rotate, no cloud bills. Open the page, load a model, and start chatting. Everything runs on WebGPU right in your browser tab.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>Open Source</h3>
+            <p>ThinkHere is MIT licensed and fully open source. Inspect the code, fork it, contribute to it. Built by the community, for the community.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works -->
+      <section class="how-section">
+        <h2 class="section-title">How it works</h2>
+        <p class="how-description">ThinkHere uses Google's MediaPipe LLM Inference API to run language models directly in your browser via WebGPU. Model weights are downloaded once and cached locally in your browser's storage, so subsequent loads take just seconds.</p>
+
+        <div class="flow-diagram">
+          <div class="flow-step">
+            <div class="step-label">Step 1</div>
+            <div class="step-text">Load model weights</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="step-label">Step 2</div>
+            <div class="step-text">Compile via WebGPU</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="step-label">Step 3</div>
+            <div class="step-text">Inference on your GPU</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="step-label">Step 4</div>
+            <div class="step-text">Response stays local</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <p>Ready to try private AI that runs entirely on your device?</p>
+        <div class="cta-buttons">
+          <a class="btn-primary" href="index.html">Try it now</a>
+          <a class="btn-secondary" href="#" onclick="signUp(); return false;">Create a free account</a>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="page-footer">
+      &copy; 2026 ThinkHere. MIT License.
+    </footer>
+  </div>
+
+  <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>

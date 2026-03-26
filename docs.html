@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs — ThinkHere | Private AI in Your Browser</title>
+  <meta name="description" content="Documentation for ThinkHere. Getting started, feature tiers, device requirements, and available models.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Docs Page Styles ── */
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    .page-content {
+      flex: 1;
+      padding: 0 24px;
+      overflow-y: auto;
+    }
+
+    /* Docs header */
+    .docs-header {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .docs-header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .docs-header p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    /* Sections */
+    .docs-section {
+      margin-bottom: 56px;
+    }
+
+    .docs-section h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .docs-section h3 {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      margin: 24px 0 12px;
+    }
+
+    .docs-section p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .docs-section ul {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin: 0 0 14px 20px;
+    }
+
+    .docs-section li {
+      margin-bottom: 6px;
+    }
+
+    .docs-section strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Getting started steps */
+    .steps {
+      display: flex;
+      gap: 16px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Tier comparison table */
+    .tier-table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .tier-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 560px;
+    }
+
+    .tier-table thead {
+      background: var(--surface-2);
+    }
+
+    .tier-table th {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tier-table th:not(:first-child) {
+      text-align: center;
+    }
+
+    .tier-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    .tier-table td:not(:first-child) {
+      text-align: center;
+    }
+
+    .tier-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tier-table tbody tr:hover {
+      background: var(--surface);
+    }
+
+    .tier-table .feature-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* Checkmark and dash */
+    .check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(196, 240, 110, 0.12);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .dash {
+      color: var(--text-faint);
+      font-size: 1rem;
+    }
+
+    /* Device requirements */
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .req-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .req-item.warning {
+      border-color: #5c3a2a;
+      background: rgba(255, 140, 60, 0.04);
+    }
+
+    .req-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-faint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .req-value {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .req-value.dim {
+      color: var(--text-dim);
+    }
+
+    /* Models table */
+    .models-table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .models-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 480px;
+    }
+
+    .models-table thead {
+      background: var(--surface-2);
+    }
+
+    .models-table th {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .models-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    .models-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .models-table tbody tr:hover {
+      background: var(--surface);
+    }
+
+    .models-table .model-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.04em;
+      padding: 2px 8px;
+      border-radius: 100px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+
+    .tag.free {
+      background: var(--accent-glow);
+      color: var(--accent);
+    }
+
+    /* Footer */
+    .page-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-faint);
+      letter-spacing: 0.04em;
+    }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      .docs-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .req-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-wrap">
+    <header>
+      <a class="logo" href="/">Think<span>Here</span></a>
+      <div class="header-right">
+        <a class="header-nav" href="about.html">About</a>
+        <a class="header-nav" href="blog.html">Blog</a>
+        <a class="header-nav" href="docs.html">Docs</a>
+        <a class="auth-btn sign-in" href="#" onclick="signIn(); return false;">Sign In</a>
+        <a class="auth-btn create-account" href="#" onclick="signUp(); return false;">Create Account</a>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Docs Header -->
+      <div class="docs-header">
+        <h1>Documentation</h1>
+        <p>Everything you need to get started with ThinkHere.</p>
+      </div>
+
+      <!-- Getting Started -->
+      <section class="docs-section">
+        <h2>Getting Started</h2>
+        <p>ThinkHere runs entirely in your browser. There is nothing to install, no API keys to configure, and no account required to start chatting.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">Step 1</div>
+            <div class="step-text">Open <a href="index.html" style="color: var(--accent); text-decoration: none;">thinkhere.ai</a> in a supported browser</div>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 2</div>
+            <div class="step-text">Click <strong>Load Model</strong> to download and initialize the AI</div>
+          </div>
+          <div class="step">
+            <div class="step-num">Step 3</div>
+            <div class="step-text">Start chatting &mdash; everything runs locally on your device</div>
+          </div>
+        </div>
+
+        <p>The first load downloads model weights (1&ndash;3 GB depending on the model). After that, the model loads from your browser's cache in seconds.</p>
+      </section>
+
+      <!-- Tier Comparison -->
+      <section class="docs-section">
+        <h2>Feature Tiers</h2>
+        <p>ThinkHere offers three tiers. All tiers run the model locally in your browser &mdash; we never see your conversations.</p>
+
+        <div class="tier-table-wrap">
+          <table class="tier-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Free</th>
+                <th>Logged In (Free)</th>
+                <th>Paid (Monthly)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="feature-name">Gemma 3n E2B</td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">All models (9+)</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Multimodal (images)</td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">System prompts</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Temperature / generation controls</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Conversation history</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Export conversations</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Knowledge base / RAG</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">File upload as context</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Priority support</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Premium features (coming soon)</td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="dash">&mdash;</span></td>
+                <td><span class="check">&#10003;</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Device Requirements -->
+      <section class="docs-section">
+        <h2>Device Requirements</h2>
+        <p>ThinkHere runs AI inference on your local hardware, so device capability matters.</p>
+
+        <div class="req-grid">
+          <div class="req-item">
+            <div class="req-label">Browser</div>
+            <div class="req-value">Chrome 113+, Edge 113+, Safari 18+</div>
+          </div>
+          <div class="req-item">
+            <div class="req-label">API</div>
+            <div class="req-value">WebGPU required</div>
+          </div>
+          <div class="req-item">
+            <div class="req-label">Memory</div>
+            <div class="req-value">Minimum 6 GB RAM for Gemma 3n E2B</div>
+          </div>
+          <div class="req-item">
+            <div class="req-label">Best Experience</div>
+            <div class="req-value">Desktop or laptop with dedicated or integrated GPU</div>
+          </div>
+          <div class="req-item warning">
+            <div class="req-label">iPhone</div>
+            <div class="req-value dim">Not supported &mdash; iOS memory limits prevent model loading</div>
+          </div>
+          <div class="req-item">
+            <div class="req-label">iPad</div>
+            <div class="req-value dim">M-series iPads may work, though experience varies</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Models -->
+      <section class="docs-section">
+        <h2>Available Models</h2>
+        <p>The following models are available in the logged-in tier. The free tier includes Gemma 3n E2B only.</p>
+
+        <div class="models-table-wrap">
+          <table class="models-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Family</th>
+                <th>Size</th>
+                <th>Tier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="model-name">Gemma 3n E2B</td>
+                <td>Gemma</td>
+                <td>~3 GB</td>
+                <td><span class="tag free">Free</span></td>
+              </tr>
+              <tr>
+                <td class="model-name">Gemma 3n E4B</td>
+                <td>Gemma</td>
+                <td>~4 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Gemma 3 1B</td>
+                <td>Gemma</td>
+                <td>~1.3 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Gemma 2 2B</td>
+                <td>Gemma</td>
+                <td>~1.6 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Phi-4 Mini</td>
+                <td>Phi</td>
+                <td>~2.3 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Llama 3.2 1B</td>
+                <td>Llama</td>
+                <td>~1.3 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Llama 3.2 3B</td>
+                <td>Llama</td>
+                <td>~2.1 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen3.5 0.6B</td>
+                <td>Qwen</td>
+                <td>~0.8 GB</td>
+                <td>Logged In</td>
+              </tr>
+              <tr>
+                <td class="model-name">Qwen3.5 1.7B</td>
+                <td>Qwen</td>
+                <td>~1.4 GB</td>
+                <td>Logged In</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Model sizes are approximate and represent the download size. Larger models generally produce higher quality responses but require more RAM and may generate tokens more slowly.</p>
+      </section>
+
+    </div>
+
+    <footer class="page-footer">
+      &copy; 2026 ThinkHere. MIT License.
+    </footer>
+  </div>
+
+  <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,752 @@
+// ── ThinkHere — Free Tier: MediaPipe-only Chat ──
+
+import { FilesetResolver, LlmInference } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai/genai_bundle.mjs";
+import { marked } from "https://esm.run/marked";
+
+const MEDIAPIPE_WASM_PATH = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai/wasm";
+const MEDIAPIPE_CACHE_NAME = "thinkhere-mediapipe-models";
+
+// ── The single model for the free tier ──
+const MODEL = {
+  id: "gemma-3n-E2B",
+  name: "Gemma 3n E2B",
+  desc: "Google's multimodal model. Text & image input.",
+  tech: "MediaPipe LLM · LiteRT · WebGPU · int4",
+  size: "~3 GB",
+  sizeMB: 3000,
+  time: "~3 – 6 min",
+  multimodal: true,
+  supportsSystemPrompt: true,
+  modelFile: "gemma-3n-E2B-it-int4-Web.litertlm",
+  hfRepo: "Volko76/gemma-3n-E2B-it-litert-lm",
+  minRAM_GB: 6,
+};
+
+let mpInference = null;
+let pendingAttachments = [];
+let isGenerating = false;
+let shouldStop = false;
+let stopResolve = null;
+let chatHistory = [];
+let hasWebGPU = false;
+let deviceProfile = null;
+
+// Configure marked
+marked.setOptions({ breaks: true, gfm: true });
+
+// ── Detect Browser Profile ──
+function detectBrowserProfile() {
+  const ua = navigator.userAgent;
+  let name = "Unknown";
+  let version = 0;
+
+  if (/CriOS\//.test(ua)) {
+    name = "Chrome";
+    version = parseInt(ua.match(/CriOS\/(\d+)/)?.[1] || "0");
+  } else if (/FxiOS\//.test(ua)) {
+    name = "Firefox";
+    version = parseInt(ua.match(/FxiOS\/(\d+)/)?.[1] || "0");
+  } else if (/EdgiOS\//.test(ua)) {
+    name = "Edge";
+    version = parseInt(ua.match(/EdgiOS\/(\d+)/)?.[1] || "0");
+  } else if (/Edg\//.test(ua)) {
+    name = "Edge";
+    version = parseInt(ua.match(/Edg\/(\d+)/)?.[1] || "0");
+  } else if (/Chrome\//.test(ua) && !/Edg\//.test(ua)) {
+    name = "Chrome";
+    version = parseInt(ua.match(/Chrome\/(\d+)/)?.[1] || "0");
+  } else if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) {
+    name = "Safari";
+    version = parseInt(ua.match(/Version\/(\d+)/)?.[1] || "0");
+  } else if (/Firefox\//.test(ua)) {
+    name = "Firefox";
+    version = parseInt(ua.match(/Firefox\/(\d+)/)?.[1] || "0");
+  }
+
+  return { name, version };
+}
+
+// ── Detect Device Profile ──
+function detectDevice() {
+  const ua = navigator.userAgent;
+  const bp = detectBrowserProfile();
+
+  const isMobileUA = /iPhone|iPod|Android.*Mobile|Windows Phone/i.test(ua);
+  const isTabletUA = /iPad|Android(?!.*Mobile)|tablet/i.test(ua);
+  const screenWidth = window.screen?.width || window.innerWidth;
+  const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+  let deviceType = "desktop";
+  if (isMobileUA || (isTouchDevice && screenWidth < 768)) {
+    deviceType = "mobile";
+  } else if (isTabletUA || (isTouchDevice && screenWidth >= 768 && screenWidth < 1200)) {
+    deviceType = "tablet";
+  }
+
+  const rawDeviceMemory = navigator.deviceMemory || null;
+  let ramCapped = false;
+  let deviceRAM_GB;
+
+  if (rawDeviceMemory) {
+    deviceRAM_GB = rawDeviceMemory;
+    if (deviceType === "desktop" && rawDeviceMemory >= 8) {
+      ramCapped = true;
+    }
+  } else {
+    if (deviceType === "mobile") deviceRAM_GB = 4;
+    else if (deviceType === "tablet") deviceRAM_GB = 6;
+    else { deviceRAM_GB = 8; ramCapped = true; }
+  }
+
+  const isLowEnd = deviceRAM_GB <= 4 && !ramCapped;
+  const isIPhone = /iPhone|iPod/.test(ua);
+
+  return {
+    deviceType,
+    isMobile: deviceType === "mobile",
+    isTablet: deviceType === "tablet",
+    isDesktop: deviceType === "desktop",
+    isIPhone,
+    browserName: bp.name,
+    browserVersion: bp.version,
+    deviceRAM_GB,
+    ramCapped,
+    isLowEnd,
+  };
+}
+
+// ── Check WebGPU Support ──
+async function checkWebGPU() {
+  const container = document.getElementById("webgpuCheck");
+  const bp = detectBrowserProfile();
+
+  const isIPhone = /iPhone|iPod/.test(navigator.userAgent);
+  if (isIPhone) {
+    return !!(navigator.gpu && await navigator.gpu.requestAdapter().catch(() => null));
+  }
+
+  if (bp.name === "Firefox") {
+    container.innerHTML = `<div class="browser-version-warning">
+      <strong>Firefox detected</strong> (v${bp.version})<br>
+      WebGPU is not yet enabled by default in Firefox. MediaPipe models require WebGPU.<br>
+      For GPU-accelerated AI, use <code>Chrome 113+</code> or <code>Edge 113+</code>.
+    </div>`;
+  } else if (bp.name === "Safari" && bp.version < 18) {
+    container.innerHTML = `<div class="browser-version-warning">
+      <strong>Safari ${bp.version} detected</strong><br>
+      WebGPU requires Safari 18+. MediaPipe models require WebGPU.<br>
+      For best results, update Safari or use <code>Chrome 113+</code>.
+    </div>`;
+  } else if ((bp.name === "Chrome" || bp.name === "Edge") && bp.version < 113) {
+    container.innerHTML = `<div class="browser-version-warning">
+      <strong>${bp.name} ${bp.version} detected</strong><br>
+      WebGPU requires ${bp.name} 113+. Please update your browser.
+    </div>`;
+  }
+
+  if (!navigator.gpu) {
+    if (!container.innerHTML) {
+      container.innerHTML = `<div class="webgpu-warning">
+        <strong>WebGPU not available.</strong><br>
+        ThinkHere requires WebGPU to run AI models. Please use Chrome 113+, Edge 113+, or Safari 18+.
+      </div>`;
+    }
+    return false;
+  }
+  try {
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) throw new Error("No adapter");
+    return true;
+  } catch {
+    if (!container.innerHTML) {
+      container.innerHTML = `<div class="webgpu-warning">
+        WebGPU adapter not found. Please try a different browser.
+      </div>`;
+    }
+    return false;
+  }
+}
+
+// ── Update Device Info Bar ──
+function updateDeviceInfoBar() {
+  const bar = document.getElementById("deviceInfoBar");
+  if (!deviceProfile || !bar) return;
+
+  const dp = deviceProfile;
+  const typeLabel = dp.deviceType.charAt(0).toUpperCase() + dp.deviceType.slice(1);
+
+  bar.innerHTML = `<div class="device-info-bar">
+    <span>${typeLabel}</span>
+    <span class="info-sep">&middot;</span>
+    <span>${dp.browserName} ${dp.browserVersion}</span>
+    <span id="deviceStorageInfo"></span>
+  </div>`;
+
+  checkStorageAvailability().then(storage => {
+    const storageEl = document.getElementById("deviceStorageInfo");
+    if (storageEl && storage) {
+      const availMB = Math.round(storage.availableMB);
+      const availLabel = availMB >= 1000 ? `${(availMB / 1000).toFixed(1)} GB` : `${availMB} MB`;
+      const storageClass = availMB < 500 ? "info-warn" : "info-ok";
+      storageEl.innerHTML = `<span class="info-sep">&middot;</span> <span class="${storageClass}">${availLabel} free storage</span>`;
+    }
+  });
+}
+
+async function checkStorageAvailability() {
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      const est = await navigator.storage.estimate();
+      const quotaMB = Math.round((est.quota || 0) / 1e6);
+      const usageMB = Math.round((est.usage || 0) / 1e6);
+      return { quotaMB, usageMB, availableMB: quotaMB - usageMB };
+    }
+  } catch (e) {
+    console.warn("Storage estimation not available:", e);
+  }
+  return null;
+}
+
+// ── iPhone Banner ──
+function showIPhoneBanner() {
+  const container = document.getElementById("deviceBanners");
+  if (!container) return;
+  const banner = document.createElement("div");
+  banner.className = "iphone-unsupported-banner";
+  banner.innerHTML = `
+    <strong>iPhone not supported</strong><br>
+    iOS Safari enforces strict per-tab memory limits (~3-4 GB) that prevent AI models
+    from loading. For the best experience, use a <strong>laptop or desktop</strong> with Chrome or Edge.
+    iPads with M-series chips may also work.
+  `;
+  container.appendChild(banner);
+}
+
+// ── MediaPipe Cache Helpers ──
+function mediapipeCacheKey(modelFile) {
+  return `https://thinkhere.local/mediapipe/${modelFile}`;
+}
+
+async function getMediaPipeCachedBlob(modelFile) {
+  try {
+    const cache = await caches.open(MEDIAPIPE_CACHE_NAME);
+    const resp = await cache.match(mediapipeCacheKey(modelFile));
+    if (resp) return await resp.blob();
+  } catch (e) { console.warn("MediaPipe cache check failed:", e); }
+  return null;
+}
+
+async function downloadMediaPipeModel(hfRepo, modelFile, onProgress) {
+  const url = `https://huggingface.co/${hfRepo}/resolve/main/${modelFile}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Download failed: ${resp.status} ${resp.statusText}`);
+
+  const contentLength = parseInt(resp.headers.get("content-length") || "0", 10);
+  const reader = resp.body.getReader();
+  const chunks = [];
+  let loaded = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    loaded += value.length;
+    if (onProgress && contentLength > 0) {
+      onProgress(loaded, contentLength);
+    }
+  }
+
+  const blob = new Blob(chunks);
+
+  try {
+    const cache = await caches.open(MEDIAPIPE_CACHE_NAME);
+    await cache.put(mediapipeCacheKey(modelFile), new Response(blob.slice(0)));
+  } catch (e) { console.warn("MediaPipe cache store failed:", e); }
+
+  return blob;
+}
+
+// ── Gemma Prompt Formatter ──
+function formatGemmaPrompt(messages) {
+  let prompt = "";
+  for (const msg of messages) {
+    if (msg.role === "system") {
+      prompt += `<start_of_turn>user\n${msg.content}<end_of_turn>\n`;
+      prompt += `<start_of_turn>model\nUnderstood.<end_of_turn>\n`;
+    } else if (msg.role === "user") {
+      prompt += `<start_of_turn>user\n${msg.content}<end_of_turn>\n`;
+    } else if (msg.role === "assistant") {
+      prompt += `<start_of_turn>model\n${msg.content}<end_of_turn>\n`;
+    }
+  }
+  prompt += `<start_of_turn>model\n`;
+  return prompt;
+}
+
+// ── Token Count ──
+function estimateTokens(text) {
+  return Math.ceil(text.length / 4);
+}
+
+function updateTokenCount() {
+  let total = 0;
+  for (const msg of chatHistory) {
+    total += estimateTokens(msg.content) + 4;
+  }
+  const maxCtx = 4096;
+  const pct = Math.min((total / maxCtx) * 100, 100);
+
+  document.getElementById("tokenContext").textContent = `~${total} tokens`;
+  const fill = document.getElementById("tokenBarFill");
+  fill.style.width = `${pct}%`;
+  fill.classList.remove("warn", "danger");
+  if (pct > 85) fill.classList.add("danger");
+  else if (pct > 65) fill.classList.add("warn");
+}
+
+// ── Load Model ──
+window.loadModel = async function () {
+  const introSection = document.getElementById("introSection");
+  const loadScreen = document.getElementById("loadingScreen");
+
+  // Pre-load safety checks
+  if (deviceProfile && deviceProfile.isIPhone) {
+    alert("iPhone is not supported. Please use a desktop or tablet.");
+    return;
+  }
+
+  if (!hasWebGPU) {
+    alert("WebGPU is required to run ThinkHere. Please use Chrome 113+, Edge 113+, or Safari 18+.");
+    return;
+  }
+
+  // Check storage
+  const cachedBlob = await getMediaPipeCachedBlob(MODEL.modelFile);
+  if (!cachedBlob) {
+    const storage = await checkStorageAvailability();
+    const neededMB = MODEL.sizeMB * 1.2;
+    if (storage && storage.availableMB < neededMB) {
+      const neededLabel = `${(neededMB / 1000).toFixed(1)} GB`;
+      const availLabel = storage.availableMB >= 1000 ? `${(storage.availableMB / 1000).toFixed(1)} GB` : `${storage.availableMB} MB`;
+      if (!confirm(`Gemma 3n E2B needs ~${neededLabel} of free storage, but you have ~${availLabel} available.\n\nTry downloading anyway?`)) return;
+    }
+
+    if (deviceProfile && !deviceProfile.ramCapped && deviceProfile.deviceRAM_GB < MODEL.minRAM_GB) {
+      if (!confirm(`Gemma 3n E2B needs ~${MODEL.minRAM_GB} GB RAM, but your device has ~${deviceProfile.deviceRAM_GB} GB.\n\nTry loading anyway?`)) return;
+    }
+  }
+
+  // Hide intro, show loading screen
+  if (introSection) introSection.style.display = "none";
+  loadScreen.classList.add("active");
+
+  const label = document.getElementById("loadingLabel");
+  const bar = document.getElementById("progressBar");
+  const statProgress = document.getElementById("statProgress");
+  const statSize = document.getElementById("statSize");
+  const statElapsed = document.getElementById("statElapsed");
+  const tip = document.getElementById("loadingTip");
+
+  document.getElementById("loadingModelName").textContent = MODEL.name;
+
+  // Phase management
+  const phases = {
+    download: document.getElementById("phaseDownload"),
+    compile: document.getElementById("phaseCompile"),
+    ready: document.getElementById("phaseReady"),
+  };
+
+  function setPhase(name) {
+    Object.entries(phases).forEach(([key, el]) => {
+      el.classList.remove("active", "done");
+      if (key === name) el.classList.add("active");
+    });
+    const order = ["download", "compile", "ready"];
+    const idx = order.indexOf(name);
+    for (let i = 0; i < idx; i++) {
+      phases[order[i]].classList.remove("active");
+      phases[order[i]].classList.add("done");
+    }
+  }
+
+  // Tips
+  const tips = [
+    "Downloading LiteRT model weights — this only happens once, then it's cached locally.",
+    "Gemma 3n supports text and image input in one model.",
+    "All data stays on your device. Nothing is sent to any server.",
+    "After caching, this model will load in just a few seconds next time.",
+    "MediaPipe uses WebGPU for fast on-device inference.",
+  ];
+  let tipIdx = 0;
+  const tipInterval = setInterval(() => {
+    tipIdx = (tipIdx + 1) % tips.length;
+    tip.style.opacity = 0;
+    setTimeout(() => {
+      tip.textContent = tips[tipIdx];
+      tip.style.opacity = 1;
+    }, 300);
+  }, 5000);
+
+  // Elapsed timer
+  const startTime = performance.now();
+  const timerInterval = setInterval(() => {
+    const secs = Math.floor((performance.now() - startTime) / 1000);
+    const min = Math.floor(secs / 60);
+    const sec = secs % 60;
+    statElapsed.textContent = min > 0 ? `${min}m ${sec}s elapsed` : `${sec}s elapsed`;
+  }, 1000);
+
+  setPhase("download");
+
+  try {
+    label.textContent = "Checking cache...";
+
+    let blob = cachedBlob;
+    if (blob) {
+      label.textContent = "Loading from cache...";
+      bar.style.width = "100%";
+      statProgress.textContent = "100%";
+      statSize.textContent = `${(blob.size / 1e9).toFixed(1)} GB (cached)`;
+    } else {
+      label.textContent = `Downloading ${MODEL.modelFile}...`;
+      blob = await downloadMediaPipeModel(MODEL.hfRepo, MODEL.modelFile, (loaded, total) => {
+        const pct = Math.min(99, Math.round((loaded / total) * 100));
+        bar.style.width = `${pct}%`;
+        statProgress.textContent = `${pct}%`;
+        label.textContent = `Downloading model... ${pct}%`;
+        statSize.textContent = `${(loaded / 1e9).toFixed(1)} / ${(total / 1e9).toFixed(1)} GB`;
+      });
+    }
+
+    // Compile phase
+    setPhase("compile");
+    label.textContent = "Initializing MediaPipe LLM engine...";
+    tip.textContent = "Creating inference session — this may take a moment.";
+
+    const blobUrl = URL.createObjectURL(blob);
+    try {
+      const genai = await FilesetResolver.forGenAiTasks(MEDIAPIPE_WASM_PATH);
+      mpInference = await LlmInference.createFromOptions(genai, {
+        baseOptions: { modelAssetPath: blobUrl },
+        maxTokens: 4096,
+        topK: 40,
+        temperature: 0.7,
+        randomSeed: Math.floor(Math.random() * 1e9),
+        maxNumImages: 4,
+      });
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
+
+    // Done
+    clearInterval(timerInterval);
+    clearInterval(tipInterval);
+    setPhase("ready");
+    label.textContent = "Ready!";
+    bar.style.width = "100%";
+    statProgress.textContent = "100%";
+
+    await new Promise(r => setTimeout(r, 600));
+
+    // Transition to chat
+    loadScreen.classList.remove("active");
+    loadScreen.style.display = "none";
+    document.getElementById("chatContainer").classList.add("active");
+    document.getElementById("modelLabel").textContent = MODEL.name;
+    document.getElementById("headerStatus").textContent = MODEL.name;
+    document.getElementById("sendBtn").disabled = false;
+    document.getElementById("userInput").focus();
+
+    // Enable multimodal UI
+    document.getElementById("multimodalBtns").classList.add("active");
+    updateTokenCount();
+
+  } catch (err) {
+    clearInterval(timerInterval);
+    clearInterval(tipInterval);
+    bar.style.background = "#e05050";
+    console.error(err);
+
+    const msg = (err.message || "").toLowerCase();
+    const isNetworkError = msg.includes("failed to fetch") || msg.includes("cors") || msg.includes("403") || msg.includes("network") || msg.includes("blocked");
+
+    if (isNetworkError) {
+      label.textContent = "Network error — unable to download model";
+      tip.textContent = "";
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "network-error";
+      errorDiv.innerHTML = `
+        <strong>Blocked by network policy</strong>
+        Model weights are hosted on Hugging Face and could not be reached.
+        <br><br>
+        Ask your IT team to allow access to:
+        <ul>
+          <li><code>huggingface.co</code> — model weights</li>
+          <li><code>cdn.jsdelivr.net</code> — MediaPipe runtime</li>
+        </ul>
+        <a href="/" style="color: var(--accent); text-decoration: underline;">Reload page</a>
+      `;
+      loadScreen.appendChild(errorDiv);
+    } else {
+      label.textContent = `Error: ${err.message}`;
+      tip.textContent = "";
+      tip.innerHTML = `Something went wrong. Try refreshing the page. <a href="/" style="color: var(--accent); text-decoration: underline;">Reload</a>`;
+    }
+  }
+};
+
+// ── Send Message ──
+window.sendMessage = async function () {
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if (!text || isGenerating || !mpInference) return;
+
+  const userBubble = appendMessage("user", text);
+
+  // Show attached images in user bubble
+  if (pendingAttachments.length > 0) {
+    for (const att of pendingAttachments) {
+      const img = document.createElement("img");
+      img.src = att.data;
+      img.className = "message-image";
+      img.alt = att.name;
+      userBubble.appendChild(img);
+    }
+  }
+
+  chatHistory.push({ role: "user", content: text });
+  input.value = "";
+  autoResize(input);
+  isGenerating = true;
+  shouldStop = false;
+  showStopButton();
+  document.getElementById("tokenInfo").textContent = "Generating...";
+
+  const messages = [...chatHistory];
+  const prompt = formatGemmaPrompt(messages);
+
+  // Create assistant bubble for streaming
+  const bubble = appendMessage("assistant", "");
+  let fullResponse = "";
+  const startTime = performance.now();
+  let tokenCount = 0;
+
+  try {
+    const stopPromise = new Promise(resolve => { stopResolve = resolve; });
+    let stopped = false;
+
+    // Build multimodal input if attachments present
+    let mpInput = prompt;
+    if (pendingAttachments.length > 0) {
+      const parts = [];
+      for (const att of pendingAttachments) {
+        const img = new Image();
+        img.src = att.data;
+        await new Promise(r => { img.onload = r; });
+        parts.push({ imageSource: img });
+      }
+      parts.push(prompt);
+      mpInput = parts;
+    }
+
+    const genPromise = new Promise((resolve, reject) => {
+      try {
+        mpInference.generateResponse(mpInput, (chunk, done) => {
+          if (stopped || shouldStop) return;
+          fullResponse += chunk;
+          tokenCount++;
+          renderStreamingMarkdown(bubble, fullResponse);
+          scrollToBottom();
+          if (done) resolve();
+        });
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+    await Promise.race([genPromise, stopPromise]);
+    stopped = true;
+    stopResolve = null;
+
+    chatHistory.push({ role: "assistant", content: fullResponse });
+    pendingAttachments = [];
+
+    if (!shouldStop) {
+      const elapsed = (performance.now() - startTime) / 1000;
+      const tps = (tokenCount / elapsed).toFixed(1);
+      document.getElementById("tokenInfo").textContent = `${tokenCount} tokens · ${tps} tok/s`;
+    }
+
+    // Final markdown render
+    if (fullResponse) {
+      bubble.innerHTML = marked.parse(fullResponse);
+      bubble.classList.add("rendered");
+    }
+
+  } catch (err) {
+    if (!shouldStop && err.name !== "AbortError") {
+      bubble.textContent = `[Error: ${err.message}]`;
+      console.error(err);
+      document.getElementById("tokenInfo").textContent = "Error";
+    }
+  }
+
+  isGenerating = false;
+  shouldStop = false;
+  pendingAttachments = [];
+  updateAttachmentPreview();
+  hideStopButton();
+  document.getElementById("sendBtn").disabled = false;
+  document.getElementById("userInput").focus();
+  updateTokenCount();
+};
+
+// ── Stop Generation ──
+window.stopGeneration = function () {
+  shouldStop = true;
+  if (stopResolve) { stopResolve(); stopResolve = null; }
+};
+
+function showStopButton() {
+  document.getElementById("sendBtn").style.display = "none";
+  document.getElementById("stopBtn").classList.add("active");
+}
+
+function hideStopButton() {
+  document.getElementById("stopBtn").classList.remove("active");
+  document.getElementById("sendBtn").style.display = "";
+}
+
+// ── New Chat ──
+window.newChat = function () {
+  chatHistory = [];
+  const container = document.getElementById("messages");
+  container.innerHTML = '<div class="message system">New conversation · all processing happens here</div>';
+  updateTokenCount();
+};
+
+// ── Multimodal: Image Upload ──
+window.handleImageUpload = function (input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = "";
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    pendingAttachments.push({ type: "image", data: e.target.result, name: file.name });
+    updateAttachmentPreview();
+  };
+  reader.readAsDataURL(file);
+};
+
+function updateAttachmentPreview() {
+  const container = document.getElementById("attachmentPreview");
+  if (pendingAttachments.length === 0) {
+    container.classList.remove("active");
+    container.innerHTML = "";
+    return;
+  }
+  container.classList.add("active");
+  container.innerHTML = pendingAttachments.map((a, i) => {
+    return `<div class="attachment-thumb">
+      <img src="${a.data}" alt="${a.name}">
+      <span>${a.name}</span>
+      <button class="remove-attach" onclick="removeAttachment(${i})">×</button>
+    </div>`;
+  }).join("");
+}
+
+window.removeAttachment = function (idx) {
+  pendingAttachments.splice(idx, 1);
+  updateAttachmentPreview();
+};
+
+// ── Paste handler for images ──
+document.addEventListener("paste", (e) => {
+  if (!mpInference) return;
+  const items = Array.from(e.clipboardData?.items || []);
+  const imageItem = items.find(i => i.type.startsWith("image/"));
+  if (imageItem) {
+    e.preventDefault();
+    const file = imageItem.getAsFile();
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      pendingAttachments.push({ type: "image", data: ev.target.result, name: file.name || "pasted-image.png" });
+      updateAttachmentPreview();
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// ── Helpers ──
+function renderStreamingMarkdown(el, text) {
+  const fenceCount = (text.match(/```/g) || []).length;
+  const sanitized = fenceCount % 2 !== 0 ? text + "\n```" : text;
+  el.innerHTML = marked.parse(sanitized);
+  el.classList.add("rendered");
+}
+
+function appendMessage(role, text) {
+  const container = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = `message ${role}`;
+  div.textContent = text;
+  container.appendChild(div);
+  scrollToBottom();
+  return div;
+}
+
+function scrollToBottom() {
+  const m = document.getElementById("messages");
+  m.scrollTop = m.scrollHeight;
+}
+
+window.handleKey = function (e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+};
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 150) + "px";
+}
+window.autoResize = autoResize;
+
+// ── Scroll forwarding ──
+document.addEventListener("wheel", (e) => {
+  const messages = document.getElementById("messages");
+  if (messages && messages.offsetHeight > 0 && !messages.contains(e.target)) {
+    messages.scrollTop += e.deltaY;
+  }
+}, { passive: true });
+
+// ── GitHub stats ──
+fetch("https://api.github.com/repos/ipattis/thinkhere")
+  .then(r => r.json())
+  .then(data => {
+    const fmt = n => n >= 1000 ? (n / 1000).toFixed(1) + "k" : String(n);
+    if (data.stargazers_count != null) document.getElementById("ghStars").textContent = fmt(data.stargazers_count);
+    if (data.forks_count != null) document.getElementById("ghForks").textContent = fmt(data.forks_count);
+  })
+  .catch(() => {});
+
+// ── Init ──
+(async () => {
+  deviceProfile = detectDevice();
+  hasWebGPU = await checkWebGPU();
+  updateDeviceInfoBar();
+
+  // Show iPhone banner if needed
+  if (deviceProfile.isIPhone) {
+    showIPhoneBanner();
+    document.getElementById("startBtn").disabled = true;
+    return;
+  }
+
+  // Disable start button if no WebGPU
+  if (!hasWebGPU) {
+    const btn = document.getElementById("startBtn");
+    if (btn) btn.disabled = true;
+  }
+})();
