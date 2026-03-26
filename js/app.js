@@ -59,45 +59,62 @@ async function saveConversation() {
   const conv = {
     id,
     title: firstUserMsg ? firstUserMsg.content.slice(0, 60) : "New conversation",
-    messages: chatHistory,
+    messages: [...chatHistory],
     updatedAt: new Date().toISOString(),
   };
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put(conv);
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      tx.objectStore(STORE_NAME).put(conv);
+      tx.oncomplete = () => { console.log("Conversation saved:", id, conv.title); resolve(); };
+      tx.onerror = () => reject(tx.error);
+    });
   } catch (e) { console.error("Failed to save conversation:", e); }
 }
 
 async function loadConversationList() {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const req = tx.objectStore(STORE_NAME).getAll();
     return new Promise((resolve) => {
-      req.onsuccess = () => resolve(req.result.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)));
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const req = tx.objectStore(STORE_NAME).getAll();
+      req.onsuccess = () => {
+        const results = req.result || [];
+        resolve(results.sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || "")));
+      };
       req.onerror = () => resolve([]);
     });
-  } catch { return []; }
+  } catch (e) {
+    console.error("Failed to load conversations:", e);
+    return [];
+  }
 }
 
 async function loadConversation(id) {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const req = tx.objectStore(STORE_NAME).get(id);
     return new Promise((resolve) => {
-      req.onsuccess = () => resolve(req.result);
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const req = tx.objectStore(STORE_NAME).get(id);
+      req.onsuccess = () => resolve(req.result || null);
       req.onerror = () => resolve(null);
     });
-  } catch { return null; }
+  } catch (e) {
+    console.error("Failed to load conversation:", e);
+    return null;
+  }
 }
 
 async function deleteConversation(id) {
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).delete(id);
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      tx.objectStore(STORE_NAME).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
   } catch (e) { console.error("Failed to delete conversation:", e); }
 }
 
@@ -107,15 +124,20 @@ async function updateConversationTitle(id, title) {
   conv.title = title;
   try {
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put(conv);
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      tx.objectStore(STORE_NAME).put(conv);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
   } catch (e) { console.error("Failed to update title:", e); }
 }
 
 async function renderConversationList() {
   const list = document.getElementById("conversationList");
-  if (!list) return;
+  if (!list) { console.warn("conversationList element not found"); return; }
   const convs = await loadConversationList();
+  console.log("renderConversationList:", convs.length, "conversations", convs);
 
   while (list.firstChild) list.removeChild(list.firstChild);
 
