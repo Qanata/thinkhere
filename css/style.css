@@ -1040,6 +1040,46 @@ a.logo-product:hover {
   display: flex;
 }
 
+.file-preview {
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.file-preview.active {
+  display: flex;
+}
+
+.file-thumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.file-thumb .file-icon {
+  font-size: 1rem;
+}
+
+.file-thumb .remove-attach {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 2px;
+}
+
+.file-thumb .remove-attach:hover {
+  color: #e05050;
+}
+
 .attachment-thumb {
   display: flex;
   align-items: center;
