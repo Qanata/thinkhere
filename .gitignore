@@ -9,5 +9,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Brand assets (reference only)
+qanata_brand/
+
 # Node (if ever added)
 node_modules/

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
@@ -12,7 +12,7 @@
   <meta name="author" content="ThinkHere Team">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* ── Blog Page Styles ── */
@@ -24,10 +24,85 @@
       min-height: 100dvh;
     }
 
+    /* Top nav for content pages */
+    .page-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: var(--topbar-bg);
+      backdrop-filter: blur(12px);
+    }
+
+    .page-header-logo {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .page-nav {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.2s ease;
+    }
+
+    .page-nav:hover {
+      color: var(--accent);
+    }
+
     .page-content {
       flex: 1;
       padding: 0 24px;
       overflow-y: auto;
+    }
+
+    /* Theme toggle for content pages */
+    .page-theme-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--surface2);
+      border: 1px solid var(--border-md);
+      border-radius: 20px;
+      padding: 3px;
+    }
+
+    .page-theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .page-theme-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px var(--shadow);
     }
 
     /* Blog index header */
@@ -37,14 +112,16 @@
     }
 
     .blog-header h1 {
-      font-family: var(--font-serif);
+      font-family: var(--font-sans);
       font-size: 2.2rem;
-      font-weight: 400;
+      font-weight: 300;
       margin-bottom: 12px;
+      letter-spacing: -0.02em;
+      color: var(--hero-h);
     }
 
     .blog-header p {
-      color: var(--text-dim);
+      color: var(--text-muted);
       font-size: 0.95rem;
     }
 
@@ -59,22 +136,22 @@
     }
 
     .post-card:hover {
-      border-color: var(--accent-dim);
+      border-color: var(--border-md);
     }
 
     .post-meta {
       font-family: var(--font-mono);
       font-size: 0.7rem;
-      color: var(--text-faint);
+      color: var(--text-dim);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-bottom: 12px;
     }
 
     .post-card h2 {
-      font-family: var(--font-serif);
+      font-family: var(--font-sans);
       font-size: 1.5rem;
-      font-weight: 400;
+      font-weight: 600;
       margin-bottom: 14px;
       line-height: 1.3;
     }
@@ -90,7 +167,7 @@
     }
 
     .post-excerpt {
-      color: var(--text-dim);
+      color: var(--text-muted);
       font-size: 0.9rem;
       line-height: 1.6;
       margin-bottom: 16px;
@@ -121,23 +198,24 @@
     }
 
     .post-full h1 {
-      font-family: var(--font-serif);
+      font-family: var(--font-sans);
       font-size: 2rem;
-      font-weight: 400;
+      font-weight: 600;
       line-height: 1.25;
       margin-bottom: 32px;
+      color: var(--hero-h);
     }
 
     .post-full h2 {
-      font-family: var(--font-serif);
+      font-family: var(--font-sans);
       font-size: 1.4rem;
-      font-weight: 400;
+      font-weight: 600;
       margin: 36px 0 16px;
       color: var(--text);
     }
 
     .post-full p {
-      color: var(--text-dim);
+      color: var(--text-muted);
       font-size: 0.95rem;
       line-height: 1.75;
       margin-bottom: 18px;
@@ -159,7 +237,7 @@
     }
 
     .post-full ul {
-      color: var(--text-dim);
+      color: var(--text-muted);
       font-size: 0.95rem;
       line-height: 1.75;
       margin: 0 0 18px 24px;
@@ -177,7 +255,7 @@
       margin: 24px 0;
       font-family: var(--font-mono);
       font-size: 0.8rem;
-      color: var(--text-dim);
+      color: var(--text-muted);
       line-height: 1.6;
     }
 
@@ -205,29 +283,30 @@
 
     .btn-primary {
       display: inline-block;
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.03em;
+      font-weight: 600;
+      letter-spacing: 0.02em;
       text-decoration: none;
       padding: 12px 28px;
       border-radius: 100px;
-      color: var(--bg);
+      color: #fff;
       background: var(--accent);
       border: 1px solid var(--accent);
       transition: all 0.2s ease;
     }
 
     .btn-primary:hover {
-      background: #d4ff7e;
+      background: #d4724e;
+      border-color: #d4724e;
     }
 
     .btn-secondary {
       display: inline-block;
-      font-family: var(--font-mono);
+      font-family: var(--font-sans);
       font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.03em;
+      font-weight: 600;
+      letter-spacing: 0.02em;
       text-decoration: none;
       padding: 12px 28px;
       border-radius: 100px;
@@ -249,7 +328,7 @@
       text-align: center;
       font-family: var(--font-mono);
       font-size: 0.65rem;
-      color: var(--text-faint);
+      color: var(--text-dim);
       letter-spacing: 0.04em;
     }
 
@@ -266,6 +345,14 @@
       .post-card {
         padding: 24px;
       }
+
+      .page-header {
+        padding: 16px;
+      }
+
+      .page-header-right {
+        gap: 8px;
+      }
     }
   </style>
 </head>
@@ -273,14 +360,30 @@
 <body>
 
   <div class="page-wrap">
-    <header>
-      <a class="logo" href="/">Think<span>Here</span></a>
-      <div class="header-right">
-        <a class="header-nav" href="about.html">About</a>
-        <a class="header-nav" href="blog.html">Blog</a>
-        <a class="header-nav" href="docs.html">Docs</a>
-        <a class="auth-btn sign-in" href="#" onclick="signIn(); return false;">Sign In</a>
-        <a class="auth-btn create-account" href="#" onclick="signUp(); return false;">Create Account</a>
+    <header class="page-header">
+      <a class="page-header-logo" href="/">
+        <svg width="13" height="15" viewBox="0 0 72 80" fill="none">
+          <circle cx="24" cy="9" r="6" fill="#b85c38"/>
+          <circle cx="48" cy="9" r="6" fill="#b85c38"/>
+          <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round" class="ql-stroke"/>
+          <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round" class="ql-stroke"/>
+        </svg>
+        ThinkHere
+      </a>
+      <div class="page-header-right">
+        <a class="page-nav" href="about.html">About</a>
+        <a class="page-nav" href="blog.html">Blog</a>
+        <a class="page-nav" href="docs.html">Docs</a>
+        <div class="page-theme-toggle">
+          <button class="page-theme-btn active" id="btn-dark" onclick="setTheme('dark')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <button class="page-theme-btn" id="btn-light" onclick="setTheme('light')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <a class="btn-top-ghost" href="#" onclick="signIn(); return false;">Sign In</a>
+        <a class="btn-top-solid" href="#" onclick="signUp(); return false;">Create Account</a>
       </div>
     </header>
 
@@ -379,10 +482,24 @@
     </div>
 
     <footer class="page-footer">
-      &copy; 2026 ThinkHere. MIT License.
+      &copy; 2026 ThinkHere by Qanata Labs. MIT License.
     </footer>
   </div>
 
+  <script>
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
+      document.getElementById('btn-light').classList.toggle('active', t === 'light');
+      var strokeCol = t === 'light' ? '#9a9a9a' : '#f4f1eb';
+      document.querySelectorAll('.ql-stroke').forEach(function(el) { el.setAttribute('stroke', strokeCol); });
+      localStorage.setItem('thinkhere-theme', t);
+    }
+    (function() {
+      var saved = localStorage.getItem('thinkhere-theme');
+      if (saved) setTheme(saved);
+    })();
+  </script>
   <script type="module" src="js/auth.js"></script>
 </body>
 

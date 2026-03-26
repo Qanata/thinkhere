@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
@@ -8,22 +8,91 @@
   <meta name="description" content="Run AI entirely in your browser. No servers, no API keys, no data leaves your device. Powered by Gemma 3n and WebGPU.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
   <div class="app">
-    <header>
-      <a class="logo" href="/">Think<span>Here</span></a>
-      <div class="header-right">
-        <a class="header-nav" href="about.html">About</a>
-        <a class="header-nav" href="blog.html">Blog</a>
-        <a class="header-nav" href="docs.html">Docs</a>
-        <a class="auth-btn sign-in" id="signInBtn" href="#" onclick="signIn(); return false;">Sign In</a>
-        <a class="auth-btn create-account" id="createAccountBtn" href="#" onclick="signUp(); return false;">Create Account</a>
-        <div class="header-meta" id="headerStatus"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo-block">
+        <a class="logo-product" href="/">ThinkHere</a>
+        <div class="logo-parent">
+          <svg width="13" height="15" viewBox="0 0 72 80" fill="none" id="ql-mark">
+            <circle cx="24" cy="9" r="6" fill="#b85c38"/>
+            <circle cx="48" cy="9" r="6" fill="#b85c38"/>
+            <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round" class="ql-stroke"/>
+            <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round" class="ql-stroke"/>
+          </svg>
+          <span class="logo-parent-text">by Qanata Labs</span>
+        </div>
+      </div>
+
+      <button class="btn-new" onclick="newChat()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        New conversation
+      </button>
+
+      <div class="nav-section">
+        <a class="nav-item" href="about.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          About
+        </a>
+        <a class="nav-item" href="blog.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 8h8M8 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Blog
+        </a>
+        <a class="nav-item" href="docs.html">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 2v6h6M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Docs
+        </a>
+        <div class="nav-divider"></div>
+        <a class="nav-item" href="https://github.com/ipattis/thinkhere" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="footer-note">
+          <span class="footer-label">Your private thinking space</span>
+          <span class="footer-body">Log in to save your conversations. Nothing you write ever leaves your device.</span>
+        </div>
+        <div class="pills">
+          <div class="pill pill-a">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            Secure
+          </div>
+          <div class="pill pill-a">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 118 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Private
+          </div>
+          <div class="pill pill-b">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Confidential
+          </div>
+        </div>
+        <a class="btn-login" id="sidebarSignInBtn" href="#" onclick="signIn(); return false;">Log in to ThinkHere</a>
+      </div>
+    </aside>
+
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+      <div class="bg-orb orb1"></div>
+      <div class="bg-orb orb2"></div>
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-meta" id="headerStatus"></div>
         <div class="gh-stats">
           <a class="gh-stat" href="https://github.com/ipattis/thinkhere/stargazers" target="_blank" rel="noopener noreferrer" aria-label="GitHub stars">
             <svg viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
@@ -37,97 +106,145 @@
             <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           </a>
         </div>
-      </div>
-    </header>
-
-    <!-- Intro Section (shown before model starts loading) -->
-    <div class="intro-section" id="introSection">
-      <h2>Run AI <em>entirely</em> in your browser</h2>
-      <p>No servers, no API keys, no data leaves your device. Powered by Gemma 3n and WebGPU — everything runs locally on your hardware.</p>
-
-      <div id="webgpuCheck"></div>
-      <div id="deviceInfoBar"></div>
-      <div id="deviceBanners"></div>
-
-      <button class="start-btn" id="startBtn" onclick="loadModel()">Load Gemma 3n E2B &amp; Start Chatting</button>
-      <p style="font-size: 0.75rem; color: var(--text-faint); max-width: 400px;">First load downloads ~3 GB of model weights. After that, the model loads from cache in seconds.</p>
-    </div>
-
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-      <div class="loader-ring"></div>
-      <div class="loading-model-name" id="loadingModelName">Gemma 3n E2B</div>
-      <div class="loading-label" id="loadingLabel">Initializing engine...</div>
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-      <div class="loading-phases">
-        <div class="phase active" id="phaseDownload"><span class="phase-dot"></span> Download</div>
-        <div class="phase" id="phaseCompile"><span class="phase-dot"></span> Compile</div>
-        <div class="phase" id="phaseReady"><span class="phase-dot"></span> Ready</div>
-      </div>
-      <div class="loading-stats" id="loadingStats">
-        <span id="statProgress">0%</span>
-        <span id="statSize">—</span>
-        <span id="statElapsed">0s elapsed</span>
-      </div>
-      <div class="loading-tip" id="loadingTip">Downloading model weights — this only happens once, then it's cached locally.</div>
-    </div>
-
-    <!-- Chat Interface -->
-    <div class="chat-container" id="chatContainer" style="position: relative;">
-
-      <div class="messages" id="messages">
-        <div class="message system">Model loaded · all processing happens here</div>
-      </div>
-
-      <div class="input-area">
-        <div class="attachment-preview" id="attachmentPreview"></div>
-        <div class="input-row">
-          <div class="multimodal-btns" id="multimodalBtns">
-            <button class="mm-btn" id="mmImageBtn" onclick="document.getElementById('mmImageInput').click()" title="Attach image">
-              <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-            </button>
-          </div>
-          <input type="file" id="mmImageInput" style="display:none" accept="image/*" onchange="handleImageUpload(this)">
-          <div class="input-wrapper">
-            <textarea id="userInput" placeholder="Say something..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-          </div>
-          <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        <div class="theme-toggle">
+          <button class="theme-btn active" id="btn-dark" onclick="setTheme('dark')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Dark
           </button>
-          <button class="stop-btn" id="stopBtn" onclick="stopGeneration()">
-            <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          <button class="theme-btn" id="btn-light" onclick="setTheme('light')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Light
           </button>
         </div>
-        <div class="input-meta">
-          <div class="input-meta-left">
-            <span id="modelLabel">—</span>
-            <button class="toolbar-btn" id="newChatBtn" onclick="newChat()">
-              <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-              New
-            </button>
+        <a class="btn-top-ghost" id="signInBtn" href="#" onclick="signIn(); return false;">Sign in</a>
+        <a class="btn-top-solid" id="createAccountBtn" href="#" onclick="signUp(); return false;">Create account</a>
+      </div>
+
+      <!-- Inner scrollable area -->
+      <div class="main-inner">
+
+        <!-- Intro Section (shown before model starts loading) -->
+        <div class="intro-section" id="introSection">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Qanata Labs &middot; Privacy-First AI
           </div>
-          <div class="input-meta-right">
-            <div class="token-bar" id="tokenBar">
-              <div class="token-bar-track">
-                <div class="token-bar-fill" id="tokenBarFill"></div>
+          <h2>Run AI <em>entirely</em> in your browser</h2>
+          <p>No servers, no API keys, no data leaves your device. Powered by Gemma 3n and WebGPU — everything runs locally on your hardware.</p>
+
+          <div id="webgpuCheck"></div>
+          <div id="deviceInfoBar"></div>
+          <div id="deviceBanners"></div>
+
+          <button class="start-btn" id="startBtn" onclick="loadModel()">Load Gemma 3n E2B &amp; Start Chatting</button>
+          <p style="font-size: 0.75rem; color: var(--text-dim); max-width: 400px;">First load downloads ~3 GB of model weights. After that, the model loads from cache in seconds.</p>
+        </div>
+
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+          <div class="loader-ring"></div>
+          <div class="loading-model-name" id="loadingModelName">Gemma 3n E2B</div>
+          <div class="loading-label" id="loadingLabel">Initializing engine...</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="loading-phases">
+            <div class="phase active" id="phaseDownload"><span class="phase-dot"></span> Download</div>
+            <div class="phase" id="phaseCompile"><span class="phase-dot"></span> Compile</div>
+            <div class="phase" id="phaseReady"><span class="phase-dot"></span> Ready</div>
+          </div>
+          <div class="loading-stats" id="loadingStats">
+            <span id="statProgress">0%</span>
+            <span id="statSize">&mdash;</span>
+            <span id="statElapsed">0s elapsed</span>
+          </div>
+          <div class="loading-tip" id="loadingTip">Downloading model weights — this only happens once, then it's cached locally.</div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="chat-container" id="chatContainer" style="position: relative;">
+
+          <div class="messages" id="messages">
+            <div class="message system">Model loaded &middot; all processing happens here</div>
+          </div>
+
+          <div class="input-area">
+            <div class="attachment-preview" id="attachmentPreview"></div>
+            <div class="input-row">
+              <div class="multimodal-btns" id="multimodalBtns">
+                <button class="mm-btn" id="mmImageBtn" onclick="document.getElementById('mmImageInput').click()" title="Attach image">
+                  <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                </button>
               </div>
-              <span id="tokenContext">0 tokens</span>
+              <input type="file" id="mmImageInput" style="display:none" accept="image/*" onchange="handleImageUpload(this)">
+              <div class="input-wrapper">
+                <textarea id="userInput" placeholder="What's on your mind?" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+              </div>
+              <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              </button>
+              <button class="stop-btn" id="stopBtn" onclick="stopGeneration()">
+                <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+              </button>
             </div>
-            <span id="tokenInfo">Ready</span>
+            <div class="input-meta">
+              <div class="input-meta-left">
+                <span id="modelLabel">&mdash;</span>
+                <button class="toolbar-btn" id="newChatBtn" onclick="newChat()">
+                  <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                  New
+                </button>
+              </div>
+              <div class="input-meta-right">
+                <div class="token-bar" id="tokenBar">
+                  <div class="token-bar-track">
+                    <div class="token-bar-fill" id="tokenBarFill"></div>
+                  </div>
+                  <span id="tokenContext">0 tokens</span>
+                </div>
+                <span id="tokenInfo">Ready</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upgrade Banner -->
+          <div class="upgrade-banner">
+            Want more models, settings, and conversation history?
+            <a href="#" onclick="signUp(); return false;">Create a free account</a>
           </div>
         </div>
-      </div>
 
-      <!-- Upgrade Banner -->
-      <div class="upgrade-banner">
-        Want more models, settings, and conversation history?
-        <a href="#" onclick="signUp(); return false;">Create a free account</a>
       </div>
     </div>
   </div>
 
+  <script>
+    // Theme toggle
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
+      document.getElementById('btn-light').classList.toggle('active', t === 'light');
+      // Update Qanata mark stroke color for theme
+      const strokeCol = t === 'light' ? '#9a9a9a' : '#f4f1eb';
+      document.querySelectorAll('.ql-stroke').forEach(function(el) { el.setAttribute('stroke', strokeCol); });
+      localStorage.setItem('thinkhere-theme', t);
+    }
+    // Restore saved theme
+    (function() {
+      var saved = localStorage.getItem('thinkhere-theme');
+      if (saved) setTheme(saved);
+    })();
+
+    // Sidebar toggle for mobile
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+    }
+  </script>
   <script type="module" src="js/auth.js"></script>
   <script type="module" src="js/app.js"></script>
 
