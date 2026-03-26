@@ -31,55 +31,98 @@ let chatHistory = [];
 let hasWebGPU = false;
 let deviceProfile = null;
 
-// ── Conversation History ──
-let conversations = [];
-let activeConvoId = null;
+// ── IndexedDB Conversation Persistence ──
+const DB_NAME = "thinkhere";
+const DB_VERSION = 1;
+const STORE_NAME = "conversations";
+let currentConvId = null;
 
-function generateConvoId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
 }
 
-function saveConversations() {
-  try {
-    localStorage.setItem("thinkhere-convos", JSON.stringify(conversations));
-  } catch (e) { console.warn("Could not save conversations:", e); }
-}
-
-function loadConversations() {
-  try {
-    const stored = localStorage.getItem("thinkhere-convos");
-    if (stored) conversations = JSON.parse(stored);
-  } catch (e) { console.warn("Could not load conversations:", e); }
-}
-
-function createConversation() {
-  const convo = {
-    id: generateConvoId(),
-    label: "New conversation",
-    messages: [],
-    createdAt: Date.now(),
+async function saveConversation() {
+  if (chatHistory.length === 0) return;
+  const id = currentConvId || Date.now().toString();
+  currentConvId = id;
+  const firstUserMsg = chatHistory.find(m => m.role === "user");
+  const conv = {
+    id,
+    title: firstUserMsg ? firstUserMsg.content.slice(0, 60) : "New conversation",
+    messages: chatHistory,
+    updatedAt: new Date().toISOString(),
   };
-  conversations.unshift(convo);
-  activeConvoId = convo.id;
-  renderConversationList();
-  saveConversations();
-  return convo;
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put(conv);
+  } catch (e) { console.error("Failed to save conversation:", e); }
 }
 
-function getActiveConvo() {
-  return conversations.find(c => c.id === activeConvoId) || null;
+async function loadConversationList() {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const req = tx.objectStore(STORE_NAME).getAll();
+    return new Promise((resolve) => {
+      req.onsuccess = () => resolve(req.result.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)));
+      req.onerror = () => resolve([]);
+    });
+  } catch { return []; }
 }
 
-function renderConversationList() {
+async function loadConversation(id) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const req = tx.objectStore(STORE_NAME).get(id);
+    return new Promise((resolve) => {
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    });
+  } catch { return null; }
+}
+
+async function deleteConversation(id) {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).delete(id);
+  } catch (e) { console.error("Failed to delete conversation:", e); }
+}
+
+async function updateConversationTitle(id, title) {
+  const conv = await loadConversation(id);
+  if (!conv) return;
+  conv.title = title;
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put(conv);
+  } catch (e) { console.error("Failed to update title:", e); }
+}
+
+async function renderConversationList() {
   const list = document.getElementById("conversationList");
   if (!list) return;
+  const convs = await loadConversationList();
 
   while (list.firstChild) list.removeChild(list.firstChild);
 
-  for (const c of conversations) {
+  for (const c of convs) {
     const div = document.createElement("div");
-    div.className = "convo-item" + (c.id === activeConvoId ? " active" : "");
-    div.title = c.label;
+    div.className = "convo-item" + (c.id === currentConvId ? " active" : "");
+    div.title = c.title;
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", "14");
@@ -95,27 +138,25 @@ function renderConversationList() {
 
     const span = document.createElement("span");
     span.className = "convo-label";
-    span.textContent = c.label;
+    span.textContent = c.title;
 
     div.appendChild(svg);
     div.appendChild(span);
 
     const convoId = c.id;
     div.addEventListener("click", () => window.switchConversation(convoId));
-
     list.appendChild(div);
   }
 }
 
-window.switchConversation = function (id) {
+window.switchConversation = async function (id) {
   if (isGenerating) return;
-  const convo = conversations.find(c => c.id === id);
-  if (!convo) return;
+  const conv = await loadConversation(id);
+  if (!conv) return;
 
-  activeConvoId = id;
-  chatHistory = [...convo.messages];
+  currentConvId = id;
+  chatHistory = conv.messages;
 
-  // Re-render messages
   const container = document.getElementById("messages");
   container.innerHTML = "";
   for (const msg of chatHistory) {
@@ -129,14 +170,16 @@ window.switchConversation = function (id) {
     container.innerHTML = '<div class="message system">New conversation · all processing happens here</div>';
   }
 
-  renderConversationList();
+  await renderConversationList();
   updateTokenCount();
 };
 
-async function summarizeConversation(convo) {
+async function generateConversationLabel(convId) {
   if (!mpInference) return;
-  const firstUserMsg = convo.messages.find(m => m.role === "user");
-  const firstAssistantMsg = convo.messages.find(m => m.role === "assistant");
+  const conv = await loadConversation(convId);
+  if (!conv) return;
+  const firstUserMsg = conv.messages.find(m => m.role === "user");
+  const firstAssistantMsg = conv.messages.find(m => m.role === "assistant");
   if (!firstUserMsg) return;
 
   const summaryPrompt = formatGemmaPrompt([
@@ -156,12 +199,11 @@ async function summarizeConversation(convo) {
 
     label = label.replace(/[*_#"`]/g, "").trim();
     if (label.length > 0 && label.length < 60) {
-      convo.label = label;
-      renderConversationList();
-      saveConversations();
+      await updateConversationTitle(convId, label);
+      await renderConversationList();
     }
   } catch (e) {
-    console.warn("Could not summarize conversation:", e);
+    console.warn("Could not generate conversation label:", e);
   }
 }
 
@@ -635,9 +677,9 @@ window.sendMessage = async function () {
   const text = input.value.trim();
   if (!text || isGenerating || !mpInference) return;
 
-  // Ensure there's an active conversation
-  if (!activeConvoId) {
-    createConversation();
+  // Start a new conversation if none active
+  if (!currentConvId) {
+    currentConvId = Date.now().toString();
   }
 
   const userBubble = appendMessage("user", text);
@@ -654,13 +696,8 @@ window.sendMessage = async function () {
   }
 
   chatHistory.push({ role: "user", content: text });
-
-  // Sync to active conversation
-  const convo = getActiveConvo();
-  if (convo) {
-    convo.messages = [...chatHistory];
-    saveConversations();
-  }
+  await saveConversation();
+  await renderConversationList();
   input.value = "";
   autoResize(input);
   isGenerating = true;
@@ -717,14 +754,12 @@ window.sendMessage = async function () {
     chatHistory.push({ role: "assistant", content: fullResponse });
     pendingAttachments = [];
 
-    // Sync to conversation and summarize if first exchange
-    const activeConvo = getActiveConvo();
-    if (activeConvo) {
-      activeConvo.messages = [...chatHistory];
-      saveConversations();
-      if (activeConvo.label === "New conversation" && activeConvo.messages.length >= 2) {
-        summarizeConversation(activeConvo);
-      }
+    // Save to IndexedDB and generate label after first exchange
+    const isFirstExchange = chatHistory.filter(m => m.role === "assistant").length === 1;
+    await saveConversation();
+    await renderConversationList();
+    if (isFirstExchange && currentConvId) {
+      generateConversationLabel(currentConvId);
     }
 
     if (!shouldStop) {
@@ -774,19 +809,12 @@ function hideStopButton() {
 }
 
 // ── New Chat ──
-window.newChat = function () {
-  // Remove empty conversations (no messages sent)
-  conversations = conversations.filter(c => c.messages.length > 0 || c.id === activeConvoId);
-
-  // If current conversation is empty, just stay on it
-  const current = getActiveConvo();
-  if (current && current.messages.length === 0) return;
-
+window.newChat = async function () {
   chatHistory = [];
+  currentConvId = null;
   const container = document.getElementById("messages");
   container.innerHTML = '<div class="message system">New conversation · all processing happens here</div>';
-
-  createConversation();
+  await renderConversationList();
   updateTokenCount();
 };
 
@@ -898,8 +926,7 @@ fetch("https://api.github.com/repos/ipattis/thinkhere")
 
 // ── Init ──
 (async () => {
-  loadConversations();
-  renderConversationList();
+  await renderConversationList();
 
   deviceProfile = detectDevice();
   hasWebGPU = await checkWebGPU();
