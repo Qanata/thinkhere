@@ -190,10 +190,11 @@ a.logo-product:hover {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
+  padding-top: 4px;
 }
 
-.nav-item {
+.convo-item {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -204,22 +205,29 @@ a.logo-product:hover {
   cursor: pointer;
   transition: all 0.14s;
   text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.nav-item:hover {
+.convo-item:hover {
   background: var(--surface2);
   color: var(--text);
 }
 
-.nav-item svg {
-  flex-shrink: 0;
-  opacity: 0.6;
+.convo-item.active {
+  background: var(--surface2);
+  color: var(--text);
 }
 
-.nav-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 0;
+.convo-item svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.convo-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Sidebar footer */

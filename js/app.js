@@ -31,6 +31,114 @@ let chatHistory = [];
 let hasWebGPU = false;
 let deviceProfile = null;
 
+// ── Conversation History ──
+let conversations = [];
+let activeConvoId = null;
+
+function generateConvoId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function saveConversations() {
+  try {
+    localStorage.setItem("thinkhere-convos", JSON.stringify(conversations));
+  } catch (e) { console.warn("Could not save conversations:", e); }
+}
+
+function loadConversations() {
+  try {
+    const stored = localStorage.getItem("thinkhere-convos");
+    if (stored) conversations = JSON.parse(stored);
+  } catch (e) { console.warn("Could not load conversations:", e); }
+}
+
+function createConversation() {
+  const convo = {
+    id: generateConvoId(),
+    label: "New conversation",
+    messages: [],
+    createdAt: Date.now(),
+  };
+  conversations.unshift(convo);
+  activeConvoId = convo.id;
+  renderConversationList();
+  saveConversations();
+  return convo;
+}
+
+function getActiveConvo() {
+  return conversations.find(c => c.id === activeConvoId) || null;
+}
+
+function renderConversationList() {
+  const list = document.getElementById("conversationList");
+  if (!list) return;
+  list.innerHTML = conversations.map(c => `
+    <div class="convo-item${c.id === activeConvoId ? " active" : ""}" onclick="switchConversation('${c.id}')" title="${c.label}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      <span class="convo-label">${c.label}</span>
+    </div>
+  `).join("");
+}
+
+window.switchConversation = function (id) {
+  if (isGenerating) return;
+  const convo = conversations.find(c => c.id === id);
+  if (!convo) return;
+
+  activeConvoId = id;
+  chatHistory = [...convo.messages];
+
+  // Re-render messages
+  const container = document.getElementById("messages");
+  container.innerHTML = "";
+  for (const msg of chatHistory) {
+    const bubble = appendMessage(msg.role, msg.content);
+    if (msg.role === "assistant" && msg.content) {
+      bubble.innerHTML = marked.parse(msg.content);
+      bubble.classList.add("rendered");
+    }
+  }
+  if (chatHistory.length === 0) {
+    container.innerHTML = '<div class="message system">New conversation · all processing happens here</div>';
+  }
+
+  renderConversationList();
+  updateTokenCount();
+};
+
+async function summarizeConversation(convo) {
+  if (!mpInference) return;
+  const firstUserMsg = convo.messages.find(m => m.role === "user");
+  const firstAssistantMsg = convo.messages.find(m => m.role === "assistant");
+  if (!firstUserMsg) return;
+
+  const summaryPrompt = formatGemmaPrompt([
+    { role: "user", content: `Summarize this conversation in 4-6 words as a short label. Only output the label, nothing else.\n\nUser: ${firstUserMsg.content}\n${firstAssistantMsg ? `Assistant: ${firstAssistantMsg.content.slice(0, 200)}` : ""}` },
+  ]);
+
+  try {
+    let label = "";
+    await new Promise((resolve, reject) => {
+      try {
+        mpInference.generateResponse(summaryPrompt, (chunk, done) => {
+          label += chunk;
+          if (done) resolve();
+        });
+      } catch (err) { reject(err); }
+    });
+
+    label = label.replace(/[*_#"`]/g, "").trim();
+    if (label.length > 0 && label.length < 60) {
+      convo.label = label;
+      renderConversationList();
+      saveConversations();
+    }
+  } catch (e) {
+    console.warn("Could not summarize conversation:", e);
+  }
+}
+
 // Configure marked
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -501,6 +609,11 @@ window.sendMessage = async function () {
   const text = input.value.trim();
   if (!text || isGenerating || !mpInference) return;
 
+  // Ensure there's an active conversation
+  if (!activeConvoId) {
+    createConversation();
+  }
+
   const userBubble = appendMessage("user", text);
 
   // Show attached images in user bubble
@@ -515,6 +628,13 @@ window.sendMessage = async function () {
   }
 
   chatHistory.push({ role: "user", content: text });
+
+  // Sync to active conversation
+  const convo = getActiveConvo();
+  if (convo) {
+    convo.messages = [...chatHistory];
+    saveConversations();
+  }
   input.value = "";
   autoResize(input);
   isGenerating = true;
@@ -571,6 +691,16 @@ window.sendMessage = async function () {
     chatHistory.push({ role: "assistant", content: fullResponse });
     pendingAttachments = [];
 
+    // Sync to conversation and summarize if first exchange
+    const activeConvo = getActiveConvo();
+    if (activeConvo) {
+      activeConvo.messages = [...chatHistory];
+      saveConversations();
+      if (activeConvo.label === "New conversation" && activeConvo.messages.length >= 2) {
+        summarizeConversation(activeConvo);
+      }
+    }
+
     if (!shouldStop) {
       const elapsed = (performance.now() - startTime) / 1000;
       const tps = (tokenCount / elapsed).toFixed(1);
@@ -619,9 +749,18 @@ function hideStopButton() {
 
 // ── New Chat ──
 window.newChat = function () {
+  // Remove empty conversations (no messages sent)
+  conversations = conversations.filter(c => c.messages.length > 0 || c.id === activeConvoId);
+
+  // If current conversation is empty, just stay on it
+  const current = getActiveConvo();
+  if (current && current.messages.length === 0) return;
+
   chatHistory = [];
   const container = document.getElementById("messages");
   container.innerHTML = '<div class="message system">New conversation · all processing happens here</div>';
+
+  createConversation();
   updateTokenCount();
 };
 
@@ -733,6 +872,9 @@ fetch("https://api.github.com/repos/ipattis/thinkhere")
 
 // ── Init ──
 (async () => {
+  loadConversations();
+  renderConversationList();
+
   deviceProfile = detectDevice();
   hasWebGPU = await checkWebGPU();
   updateDeviceInfoBar();
