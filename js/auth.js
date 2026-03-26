@@ -1,41 +1,62 @@
-// ── ThinkHere — Cognito Hosted UI Integration ──
-// Fill in these values after setting up your Cognito User Pool
+// ── ThinkHere — Cognito Auth (Authorization Code + PKCE) ──
 
 const AUTH_CONFIG = {
-  // AWS Cognito User Pool settings
   userPoolId: "us-east-1_LSizPNStx",
   clientId: "21r4hda7dvc55rktfpmuj78ife",
   cognitoDomain: "thinkhere.auth.us-east-1.amazoncognito.com",
   region: "us-east-1",
-
-  // Redirect URIs (must match Cognito App Client settings)
   signInRedirectUri: "https://thinkhere.ai/",
   signOutRedirectUri: "https://thinkhere.ai/",
-
-  // Where authenticated users go
   appUrl: "https://app.thinkhere.ai",
-
-  // OAuth scopes
   scopes: ["openid", "email", "profile"],
 };
 
-// ── Build Cognito Hosted UI URLs ──
-function getSignInUrl() {
+// ── PKCE Helpers ──
+function generateRandomString(length) {
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2, "0")).join("").slice(0, length);
+}
+
+async function generateCodeChallenge(verifier) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+// ── Build Auth URLs ──
+async function getSignInUrl() {
+  const verifier = generateRandomString(64);
+  const challenge = await generateCodeChallenge(verifier);
+  sessionStorage.setItem("thinkhere_pkce_verifier", verifier);
+
   const params = new URLSearchParams({
     client_id: AUTH_CONFIG.clientId,
-    response_type: "token",
+    response_type: "code",
     scope: AUTH_CONFIG.scopes.join(" "),
     redirect_uri: AUTH_CONFIG.signInRedirectUri,
+    code_challenge_method: "S256",
+    code_challenge: challenge,
   });
   return `https://${AUTH_CONFIG.cognitoDomain}/login?${params}`;
 }
 
-function getSignUpUrl() {
+async function getSignUpUrl() {
+  const verifier = generateRandomString(64);
+  const challenge = await generateCodeChallenge(verifier);
+  sessionStorage.setItem("thinkhere_pkce_verifier", verifier);
+
   const params = new URLSearchParams({
     client_id: AUTH_CONFIG.clientId,
-    response_type: "token",
+    response_type: "code",
     scope: AUTH_CONFIG.scopes.join(" "),
     redirect_uri: AUTH_CONFIG.signInRedirectUri,
+    code_challenge_method: "S256",
+    code_challenge: challenge,
   });
   return `https://${AUTH_CONFIG.cognitoDomain}/signup?${params}`;
 }
@@ -48,26 +69,51 @@ function getSignOutUrl() {
   return `https://${AUTH_CONFIG.cognitoDomain}/logout?${params}`;
 }
 
-// ── Token Handling ──
-function parseTokensFromHash() {
-  const hash = window.location.hash.substring(1);
-  if (!hash) return null;
+// ── Token Exchange ──
+async function exchangeCodeForTokens(code) {
+  const verifier = sessionStorage.getItem("thinkhere_pkce_verifier");
+  if (!verifier) {
+    console.error("No PKCE verifier found");
+    return null;
+  }
 
-  const params = new URLSearchParams(hash);
-  const idToken = params.get("id_token");
-  const accessToken = params.get("access_token");
-  const expiresIn = params.get("expires_in");
+  const params = new URLSearchParams({
+    grant_type: "authorization_code",
+    client_id: AUTH_CONFIG.clientId,
+    code,
+    redirect_uri: AUTH_CONFIG.signInRedirectUri,
+    code_verifier: verifier,
+  });
 
-  if (!idToken || !accessToken) return null;
+  try {
+    const resp = await fetch(`https://${AUTH_CONFIG.cognitoDomain}/oauth2/token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
 
-  return {
-    idToken,
-    accessToken,
-    expiresIn: parseInt(expiresIn || "3600", 10),
-    timestamp: Date.now(),
-  };
+    if (!resp.ok) {
+      console.error("Token exchange failed:", resp.status, await resp.text());
+      return null;
+    }
+
+    const data = await resp.json();
+    sessionStorage.removeItem("thinkhere_pkce_verifier");
+
+    return {
+      idToken: data.id_token,
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token || null,
+      expiresIn: data.expires_in || 3600,
+      timestamp: Date.now(),
+    };
+  } catch (e) {
+    console.error("Token exchange error:", e);
+    return null;
+  }
 }
 
+// ── JWT Parsing ──
 function parseJwtPayload(token) {
   try {
     const base64Url = token.split(".")[1];
@@ -78,6 +124,7 @@ function parseJwtPayload(token) {
   }
 }
 
+// ── Token Storage ──
 function storeTokens(tokens) {
   sessionStorage.setItem("thinkhere_tokens", JSON.stringify(tokens));
 }
@@ -87,14 +134,11 @@ function getStoredTokens() {
     const raw = sessionStorage.getItem("thinkhere_tokens");
     if (!raw) return null;
     const tokens = JSON.parse(raw);
-
-    // Check expiration
     const elapsed = (Date.now() - tokens.timestamp) / 1000;
     if (elapsed >= tokens.expiresIn) {
       sessionStorage.removeItem("thinkhere_tokens");
       return null;
     }
-
     return tokens;
   } catch {
     return null;
@@ -103,15 +147,16 @@ function getStoredTokens() {
 
 function clearTokens() {
   sessionStorage.removeItem("thinkhere_tokens");
+  sessionStorage.removeItem("thinkhere_pkce_verifier");
 }
 
-// ── Auth Actions (exposed to HTML) ──
-window.signIn = function () {
-  window.location.href = getSignInUrl();
+// ── Auth Actions ──
+window.signIn = async function () {
+  window.location.href = await getSignInUrl();
 };
 
-window.signUp = function () {
-  window.location.href = getSignUpUrl();
+window.signUp = async function () {
+  window.location.href = await getSignUpUrl();
 };
 
 window.signOut = function () {
@@ -119,23 +164,7 @@ window.signOut = function () {
   window.location.href = getSignOutUrl();
 };
 
-// ── Callback Handler ──
-// Called on page load — checks if we're returning from Cognito with tokens
-function handleAuthCallback() {
-  // Check for tokens in URL hash (Cognito implicit grant callback)
-  const tokens = parseTokensFromHash();
-  if (tokens) {
-    storeTokens(tokens);
-
-    // Clean the URL and stay on thinkhere.ai
-    window.location.href = AUTH_CONFIG.signOutRedirectUri;
-    return true;
-  }
-
-  return false;
-}
-
-// ── Check if user is already authenticated ──
+// ── Check Auth State ──
 function isAuthenticated() {
   return getStoredTokens() !== null;
 }
@@ -150,14 +179,24 @@ function getAuthenticatedUser() {
   };
 }
 
-// ── Init: handle callback or update UI ──
-(function () {
-  // If this is a callback from Cognito, handle it
-  if (window.location.hash.includes("id_token") || window.location.pathname.includes("/callback")) {
-    if (handleAuthCallback()) return; // Redirecting to app
+// ── Init ──
+(async function () {
+  // Check for authorization code in URL params (returning from Cognito)
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+
+  if (code) {
+    const tokens = await exchangeCodeForTokens(code);
+    if (tokens) {
+      storeTokens(tokens);
+      // Clean URL and reload
+      window.history.replaceState(null, "", window.location.pathname);
+      window.location.reload();
+      return;
+    }
   }
 
-  // If user is already authenticated, update header buttons
+  // Update UI if authenticated
   if (isAuthenticated()) {
     const user = getAuthenticatedUser();
     const signInBtn = document.getElementById("signInBtn");
