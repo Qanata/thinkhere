@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — ThinkHere</title>
+  <meta name="description" content="ThinkHere Privacy Policy.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .page-wrap {
+      max-width: 1020px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    .page-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: var(--topbar-bg);
+      backdrop-filter: blur(12px);
+    }
+
+    .page-header-logo {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .page-nav {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.2s ease;
+    }
+
+    .page-nav:hover { color: var(--accent); }
+
+    .page-content {
+      flex: 1;
+      padding: 0 24px;
+      overflow-y: auto;
+    }
+
+    .legal-doc {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 64px 0 80px;
+    }
+
+    .legal-doc .doc-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .legal-doc h1 {
+      font-family: var(--font-sans);
+      font-size: 2.4rem;
+      font-weight: 300;
+      letter-spacing: -0.025em;
+      color: var(--hero-h);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .legal-doc .effective-date {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+    }
+
+    .legal-doc h2 {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 40px 0 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .legal-doc p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .legal-doc a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .legal-doc a:hover { color: var(--text); }
+
+    .privacy-highlight {
+      background: var(--surface);
+      border: 1px solid var(--border-md);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin: 24px 0;
+    }
+
+    .privacy-highlight p {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+    }
+
+    .page-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .page-theme-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--surface2);
+      border: 1px solid var(--border-md);
+      border-radius: 20px;
+      padding: 3px;
+    }
+
+    .page-theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .page-theme-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+
+    @media (max-width: 600px) {
+      .page-header-right { gap: 8px; }
+      .page-nav { display: none; }
+      .legal-doc h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrap">
+    <header class="page-header">
+      <a class="page-header-logo" href="/">
+        <svg width="13" height="15" viewBox="0 0 72 80" fill="none">
+          <circle cx="24" cy="9" r="6" fill="#b85c38"/>
+          <circle cx="48" cy="9" r="6" fill="#b85c38"/>
+          <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round" class="ql-stroke"/>
+          <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round" class="ql-stroke"/>
+        </svg>
+        ThinkHere
+      </a>
+      <div class="page-header-right">
+        <a class="page-nav" href="about.html">About</a>
+        <a class="page-nav" href="blog.html">Blog</a>
+        <a class="page-nav" href="docs.html">Docs</a>
+        <div class="page-theme-toggle">
+          <button class="page-theme-btn active" id="btn-dark" onclick="setTheme('dark')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <button class="page-theme-btn" id="btn-light" onclick="setTheme('light')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="legal-doc">
+        <div class="doc-eyebrow">Legal</div>
+        <h1>Privacy Policy</h1>
+        <p class="effective-date">Effective date: March 2026</p>
+
+        <div class="privacy-highlight">
+          <p><strong>The short version:</strong> ThinkHere runs AI entirely in your browser. Your conversations, documents, and model outputs never leave your device. We do not collect, transmit, or store your AI interactions.</p>
+        </div>
+
+        <h2>1. Who We Are</h2>
+        <p>ThinkHere is a product of Qanata Labs. This policy describes how we handle information in connection with the ThinkHere service at <a href="https://thinkhere.ai">thinkhere.ai</a> and <a href="https://app.thinkhere.ai">app.thinkhere.ai</a>.</p>
+
+        <h2>2. Data That Never Leaves Your Device</h2>
+        <p>The core function of ThinkHere — AI inference — happens entirely in your browser using WebGPU. The following is processed and stored only on your device and is never transmitted to us:</p>
+        <p>— Conversation messages and AI responses<br>
+        — Uploaded documents and knowledge base content<br>
+        — Model files (cached in your browser's Cache API)<br>
+        — Conversation history (stored in IndexedDB)<br>
+        — Settings and preferences (stored in localStorage)</p>
+        <p>We have no technical capability to access any of this data. Clearing your browser's site data permanently deletes it.</p>
+
+        <h2>3. Account Information (app.thinkhere.ai)</h2>
+        <p>If you create an account at <a href="https://app.thinkhere.ai">app.thinkhere.ai</a>, we collect and store:</p>
+        <p>— Your email address<br>
+        — A hashed password (managed by AWS Cognito — we never see your plaintext password)<br>
+        — Your subscription status and billing history</p>
+        <p>This information is used solely to authenticate you and manage your subscription. It is stored securely using AWS Cognito and our backend services.</p>
+
+        <h2>4. Payment Information</h2>
+        <p>Payments are processed by <a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a>. We do not store credit card numbers or payment details. Stripe provides us with subscription status and a customer identifier. Stripe's privacy policy governs their handling of your payment information.</p>
+
+        <h2>5. Analytics and Tracking</h2>
+        <p>ThinkHere does not use advertising trackers, third-party analytics services, or fingerprinting. We do not use cookies for tracking. We may collect basic, anonymised server-level access logs (IP address, page requested, timestamp) for operational purposes only. These logs are retained for a short period and are not used for profiling or advertising.</p>
+
+        <h2>6. Third-Party Services</h2>
+        <p>ThinkHere uses the following third-party services in the operation of app.thinkhere.ai:</p>
+        <p>— <strong>AWS Cognito</strong> — user authentication<br>
+        — <strong>AWS Lambda / API Gateway</strong> — subscription management backend<br>
+        — <strong>Stripe</strong> — payment processing<br>
+        — <strong>Amazon CloudFront / S3</strong> — static asset delivery</p>
+        <p>Model weights are downloaded from <a href="https://huggingface.co" target="_blank" rel="noopener">Hugging Face</a> directly to your browser on first use. Runtime libraries are loaded from <a href="https://cdn.jsdelivr.net" target="_blank" rel="noopener">jsDelivr</a>. Neither service receives your prompts or model outputs.</p>
+
+        <h2>7. Your Rights</h2>
+        <p>You may request deletion of your account and any associated data at any time by emailing <a href="mailto:contact@qanatalabs.com">contact@qanatalabs.com</a>. Because conversation data lives only on your device, deleting your account deletes the only data we hold — your email, authentication credentials, and subscription record.</p>
+
+        <h2>8. Children</h2>
+        <p>ThinkHere is not directed at children under 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us and we will delete it promptly.</p>
+
+        <h2>9. Changes to This Policy</h2>
+        <p>We may update this policy as the service evolves. We will update the effective date at the top of this page. Material changes will be communicated where possible.</p>
+
+        <h2>10. Contact</h2>
+        <p>Privacy questions or requests? Email us at <a href="mailto:contact@qanatalabs.com">contact@qanatalabs.com</a>.</p>
+      </div>
+    </div>
+
+    <footer class="page-footer">
+      &copy; 2026 ThinkHere by <a href="https://www.qanatalabs.com" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Qanata Labs</a> &middot;
+      <a href="terms.html" style="color:inherit;text-decoration:underline;">Terms</a> &middot;
+      <a href="privacy.html" style="color:inherit;text-decoration:underline;">Privacy</a>
+    </footer>
+  </div>
+
+  <script>
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
+      document.getElementById('btn-light').classList.toggle('active', t === 'light');
+      var strokeCol = t === 'light' ? '#9a9a9a' : '#f4f1eb';
+      document.querySelectorAll('.ql-stroke').forEach(function(el) { el.setAttribute('stroke', strokeCol); });
+      localStorage.setItem('thinkhere-theme', t);
+    }
+    (function() {
+      var saved = localStorage.getItem('thinkhere-theme');
+      if (saved) setTheme(saved);
+    })();
+  </script>
+</body>
+
+</html>
