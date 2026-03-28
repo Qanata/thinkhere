@@ -5,10 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — ThinkHere | Private AI in Your Browser</title>
-  <meta name="description" content="ThinkHere runs AI entirely in your browser. No servers, no API keys, no data leaves your device. Learn how it works.">
+  <meta name="description"
+    content="ThinkHere runs AI entirely in your browser. No servers, no API keys, no data leaves your device. Learn how it works.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
     /* ── About Page Styles ── */
@@ -143,7 +146,7 @@
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: rgba(184,92,56,0.1);
+      background: rgba(184, 92, 56, 0.1);
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -283,7 +286,7 @@
 
     .arch-flow-step.highlight {
       border-color: var(--accent-dim);
-      background: rgba(184,92,56,0.04);
+      background: rgba(184, 92, 56, 0.04);
       color: var(--accent);
     }
 
@@ -487,10 +490,12 @@
     <header class="page-header">
       <a class="page-header-logo" href="/">
         <svg width="13" height="15" viewBox="0 0 72 80" fill="none">
-          <circle cx="24" cy="9" r="6" fill="#b85c38"/>
-          <circle cx="48" cy="9" r="6" fill="#b85c38"/>
-          <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round" class="ql-stroke"/>
-          <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round" class="ql-stroke"/>
+          <circle cx="24" cy="9" r="6" fill="#b85c38" />
+          <circle cx="48" cy="9" r="6" fill="#b85c38" />
+          <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round"
+            class="ql-stroke" />
+          <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round"
+            class="ql-stroke" />
         </svg>
         ThinkHere
       </a>
@@ -500,14 +505,22 @@
         <a class="page-nav" href="docs.html">Docs</a>
         <div class="page-theme-toggle">
           <button class="page-theme-btn active" id="btn-dark" onclick="setTheme('dark')">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+            </svg>
           </button>
           <button class="page-theme-btn" id="btn-light" onclick="setTheme('light')">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+              <path
+                d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
           </button>
         </div>
         <a class="btn-top-ghost" href="#" onclick="signIn(); return false;">Sign In</a>
-        <a class="btn-top-solid" href="#" onclick="signUp(); return false;">Create Account</a>
+        <a class="btn-top-solid" href="https://app.thinkhere.ai/?mode=signup">Create Account</a>
       </div>
     </header>
 
@@ -516,7 +529,8 @@
       <!-- Hero -->
       <section class="hero">
         <h1>Run AI <em>entirely</em> in your browser</h1>
-        <p class="tagline">Your conversations never leave your device. No servers, no API keys, no telemetry. Just you and a model running on your own hardware.</p>
+        <p class="tagline">Your conversations never leave your device. No servers, no API keys, no telemetry. Just you
+          and a model running on your own hardware.</p>
       </section>
 
       <!-- Why ThinkHere? -->
@@ -525,24 +539,39 @@
         <div class="cards-grid">
           <div class="card">
             <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b85c38" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b85c38" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
+              </svg>
             </div>
             <h3>Privacy First</h3>
-            <p>Your data never leaves your device. Every conversation, every prompt, every response stays in your browser. There is no server to breach because there is no server at all.</p>
+            <p>Your data never leaves your device. Every conversation, every prompt, every response stays in your
+              browser. There is no server to breach because there is no server at all.</p>
           </div>
           <div class="card">
             <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b85c38" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b85c38" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
             </div>
             <h3>Zero Infrastructure</h3>
-            <p>No servers to manage, no API keys to rotate, no cloud bills. Open the page, load a model, and start chatting. Everything runs on WebGPU right in your browser tab.</p>
+            <p>No servers to manage, no API keys to rotate, no cloud bills. Open the page, load a model, and start
+              chatting. Everything runs on WebGPU right in your browser tab.</p>
           </div>
           <div class="card">
             <div class="card-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b85c38" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b85c38" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
             </div>
             <h3>Open Core</h3>
-            <p>The free tier is MIT licensed and fully open source. Inspect the code, fork it, contribute to it. Additional features are available with a free account, and premium features with a paid subscription.</p>
+            <p>The free tier is MIT licensed and fully open source. Inspect the code, fork it, contribute to it.
+              Additional features are available with a free account, and premium features with a paid subscription.</p>
           </div>
         </div>
       </section>
@@ -550,21 +579,36 @@
       <!-- How It Works — Three Architectures -->
       <section class="how-section">
         <h2 class="section-title">Three paths to <em>in-browser</em> AI</h2>
-        <p class="how-description">ThinkHere supports three different inference backends, each with its own trade-offs. All three use WebGPU for GPU acceleration, and all model weights are cached in your browser after the first download.</p>
+        <p class="how-description">ThinkHere supports three different inference backends, each with its own trade-offs.
+          All three use WebGPU for GPU acceleration, and all model weights are cached in your browser after the first
+          download.</p>
 
         <div class="arch-columns">
           <div class="arch-card">
             <h4>WebLLM + MLC</h4>
             <div class="arch-flow">
               <div class="arch-flow-step">HuggingFace<span class="step-sub">MLC-format weights</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-              <div class="arch-flow-step highlight">TVM / MLC Compiler<span class="step-sub">Ahead-of-time compilation</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-              <div class="arch-flow-step">WebGPU Compute Shaders<span class="step-sub">Pre-optimized GPU kernels</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
+              <div class="arch-flow-step highlight">TVM / MLC Compiler<span class="step-sub">Ahead-of-time
+                  compilation</span></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
+              <div class="arch-flow-step">WebGPU Compute Shaders<span class="step-sub">Pre-optimized GPU kernels</span>
+              </div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
               <div class="arch-flow-step step-end">Your GPU</div>
             </div>
-            <p>Models are compiled ahead-of-time using <strong>Apache TVM / MLC</strong> (Machine Learning Compilation). The compiler transforms model weights and operations into optimized <strong>WebGPU compute shaders</strong> that run directly on your GPU.</p>
+            <p>Models are compiled ahead-of-time using <strong>Apache TVM / MLC</strong> (Machine Learning Compilation).
+              The compiler transforms model weights and operations into optimized <strong>WebGPU compute
+                shaders</strong> that run directly on your GPU.</p>
             <div class="arch-label">Trade-offs</div>
             <ul>
               <li>Fast inference — kernels are pre-optimized</li>
@@ -577,18 +621,31 @@
           <div class="arch-card">
             <h4>Transformers.js + ONNX Runtime Web</h4>
             <div class="arch-flow">
-              <div class="arch-flow-step">HuggingFace<span class="step-sub">ONNX-format model graph + weights</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-              <div class="arch-flow-step highlight">ONNX Runtime Web<span class="step-sub">Builds execution plan at load time</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <div class="arch-flow-step">HuggingFace<span class="step-sub">ONNX-format model graph + weights</span>
+              </div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
+              <div class="arch-flow-step highlight">ONNX Runtime Web<span class="step-sub">Builds execution plan at load
+                  time</span></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
               <div class="arch-flow-step step-fork">
                 <div class="fork-option fork-primary">WebGPU</div>
                 <div class="fork-option">WASM fallback</div>
               </div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
               <div class="arch-flow-step step-end">Your GPU / CPU</div>
             </div>
-            <p>Models are stored in the standard <strong>ONNX</strong> (Open Neural Network Exchange) format. <strong>ONNX Runtime Web</strong> interprets the model graph at load time and executes it on your GPU via WebGPU, or falls back to WebAssembly on unsupported hardware.</p>
+            <p>Models are stored in the standard <strong>ONNX</strong> (Open Neural Network Exchange) format.
+              <strong>ONNX Runtime Web</strong> interprets the model graph at load time and executes it on your GPU via
+              WebGPU, or falls back to WebAssembly on unsupported hardware.</p>
             <div class="arch-label">Trade-offs</div>
             <ul>
               <li>Supports any model exportable to ONNX</li>
@@ -602,14 +659,25 @@
             <h4>MediaPipe + LiteRT</h4>
             <div class="arch-flow">
               <div class="arch-flow-step">HuggingFace<span class="step-sub">LiteRT model file (.litertlm)</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
               <div class="arch-flow-step highlight">MediaPipe GenAI<span class="step-sub">LLM Inference API</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
               <div class="arch-flow-step">WebGPU Compute<span class="step-sub">Multimodal: text + images</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18"><line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
+                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
+                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                </svg></div>
               <div class="arch-flow-step step-end">Your GPU</div>
             </div>
-            <p>Google's <strong>MediaPipe LLM Inference</strong> API loads Gemma models in the <strong>LiteRT</strong> format (formerly TFLite). Supports multimodal input — text and images — all processed on-device via WebGPU.</p>
+            <p>Google's <strong>MediaPipe LLM Inference</strong> API loads Gemma models in the <strong>LiteRT</strong>
+              format (formerly TFLite). Supports multimodal input — text and images — all processed on-device via
+              WebGPU.</p>
             <div class="arch-label">Trade-offs</div>
             <ul>
               <li>Multimodal: text and image input</li>
@@ -620,7 +688,8 @@
             <p>Gemma 3n E2B, Gemma 3n E4B</p>
           </div>
         </div>
-        <div class="arch-shared">All three methods use WebGPU for GPU acceleration. All model weights are cached in your browser after the first download — no server involved.</div>
+        <div class="arch-shared">All three methods use WebGPU for GPU acceleration. All model weights are cached in your
+          browser after the first download — no server involved.</div>
       </section>
 
       <!-- CTA -->
@@ -645,10 +714,10 @@
       document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
       document.getElementById('btn-light').classList.toggle('active', t === 'light');
       var strokeCol = t === 'light' ? '#9a9a9a' : '#f4f1eb';
-      document.querySelectorAll('.ql-stroke').forEach(function(el) { el.setAttribute('stroke', strokeCol); });
+      document.querySelectorAll('.ql-stroke').forEach(function (el) { el.setAttribute('stroke', strokeCol); });
       localStorage.setItem('thinkhere-theme', t);
     }
-    (function() {
+    (function () {
       var saved = localStorage.getItem('thinkhere-theme');
       if (saved) setTheme(saved);
     })();
