@@ -739,19 +739,24 @@ window.loadModel = async function () {
     label.textContent = "Initializing MediaPipe LLM engine...";
     tip.textContent = "Creating inference session — this may take a moment.";
 
-    // Use modelAssetBuffer to avoid blob URL double-memory OOM
-    const buffer = await blob.arrayBuffer();
-    blob = null; // free blob memory before inference engine allocates
+    // Use blob URL — blobs are chunked internally, unlike ArrayBuffer which
+    // requires contiguous memory and fails with NotReadableError on 3GB+ files
+    const blobUrl = URL.createObjectURL(blob);
+    blob = null; // drop reference so GC can reclaim during init
 
-    const genai = await FilesetResolver.forGenAiTasks(MEDIAPIPE_WASM_PATH);
-    mpInference = await LlmInference.createFromOptions(genai, {
-      baseOptions: { modelAssetBuffer: buffer },
-      maxTokens: 4096,
-      topK: 40,
-      temperature: 0.7,
-      randomSeed: Math.floor(Math.random() * 1e9),
-      maxNumImages: 4,
-    });
+    try {
+      const genai = await FilesetResolver.forGenAiTasks(MEDIAPIPE_WASM_PATH);
+      mpInference = await LlmInference.createFromOptions(genai, {
+        baseOptions: { modelAssetPath: blobUrl },
+        maxTokens: 4096,
+        topK: 40,
+        temperature: 0.7,
+        randomSeed: Math.floor(Math.random() * 1e9),
+        maxNumImages: 4,
+      });
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
 
     // Done
     clearInterval(timerInterval);
