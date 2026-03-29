@@ -480,7 +480,9 @@ function downloadViaSW(sw, url, modelFile, onProgress) {
             if (resp) {
               resolve(await resp.blob());
             } else {
-              reject(new Error("Model cached by SW but not found in Cache API"));
+              // SW couldn't cache (quota exceeded) — fall back to direct download
+              console.warn("SW download complete but cache miss — falling back to direct download");
+              resolve(await downloadDirect(url, modelFile, onProgress));
             }
           } catch (err) {
             reject(err);
