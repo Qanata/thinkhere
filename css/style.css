@@ -127,7 +127,7 @@ body {
 .logo-product {
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 20px;
+  font-size: 24px;
   letter-spacing: -0.03em;
   color: var(--text);
   line-height: 1;
@@ -148,7 +148,7 @@ a.logo-product:hover {
 
 .logo-parent-text {
   font-family: var(--font-mono);
-  font-size: 13.5px;
+  font-size: 16px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-dim);
