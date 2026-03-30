@@ -273,6 +273,7 @@ a.logo-product:hover {
 .sidebar-theme-toggle {
   margin-right: 0;
   flex-shrink: 0;
+  align-self: flex-start;
 }
 
 .footer-note {
