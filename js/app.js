@@ -908,8 +908,14 @@ fetch("https://api.github.com/repos/ipattis/thinkhere")
   .then(r => r.json())
   .then(data => {
     const fmt = n => n >= 1000 ? (n / 1000).toFixed(1) + "k" : String(n);
-    if (data.stargazers_count != null) document.getElementById("ghStars").textContent = fmt(data.stargazers_count);
-    if (data.forks_count != null) document.getElementById("ghForks").textContent = fmt(data.forks_count);
+    if (data.stargazers_count != null) {
+      const el = document.getElementById("ghStarsSidebar");
+      if (el) el.textContent = fmt(data.stargazers_count);
+    }
+    if (data.forks_count != null) {
+      const el = document.getElementById("ghForksSidebar");
+      if (el) el.textContent = fmt(data.forks_count);
+    }
   })
   .catch(() => { });
 

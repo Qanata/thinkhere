@@ -8,7 +8,9 @@
   <meta name="description" content="ThinkHere Terms of Use.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .page-wrap {
@@ -57,7 +59,9 @@
       transition: color 0.2s ease;
     }
 
-    .page-nav:hover { color: var(--accent); }
+    .page-nav:hover {
+      color: var(--accent);
+    }
 
     .page-content {
       flex: 1;
@@ -118,7 +122,9 @@
       text-decoration: underline;
     }
 
-    .legal-doc a:hover { color: var(--text); }
+    .legal-doc a:hover {
+      color: var(--text);
+    }
 
     .page-footer {
       padding: 24px;
@@ -162,9 +168,17 @@
     }
 
     @media (max-width: 600px) {
-      .page-header-right { gap: 8px; }
-      .page-nav { display: none; }
-      .legal-doc h1 { font-size: 1.8rem; }
+      .page-header-right {
+        gap: 8px;
+      }
+
+      .page-nav {
+        display: none;
+      }
+
+      .legal-doc h1 {
+        font-size: 1.8rem;
+      }
     }
   </style>
 </head>
@@ -174,23 +188,33 @@
     <header class="page-header">
       <a class="page-header-logo" href="/">
         <svg width="13" height="15" viewBox="0 0 72 80" fill="none">
-          <circle cx="24" cy="9" r="6" fill="#b85c38"/>
-          <circle cx="48" cy="9" r="6" fill="#b85c38"/>
-          <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round" class="ql-stroke"/>
-          <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round" class="ql-stroke"/>
+          <circle cx="24" cy="9" r="6" fill="#b85c38" />
+          <circle cx="48" cy="9" r="6" fill="#b85c38" />
+          <path d="M 58,52 A 22,22 0 1 0 50,62" stroke="#f4f1eb" stroke-width="6" fill="none" stroke-linecap="round"
+            class="ql-stroke" />
+          <line x1="50" y1="62" x2="62" y2="76" stroke="#f4f1eb" stroke-width="6" stroke-linecap="round"
+            class="ql-stroke" />
         </svg>
         ThinkHere
       </a>
       <div class="page-header-right">
         <a class="page-nav" href="about.html">About</a>
         <a class="page-nav" href="blog.html">Blog</a>
-        <a class="page-nav" href="docs.html">Docs</a>
+        <a class="page-nav" href="docs.html">Guide</a>
         <div class="page-theme-toggle">
           <button class="page-theme-btn active" id="btn-dark" onclick="setTheme('dark')">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+            </svg>
           </button>
           <button class="page-theme-btn" id="btn-light" onclick="setTheme('light')">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+              <path
+                d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
           </button>
         </div>
       </div>
@@ -202,48 +226,71 @@
         <h1>Terms of Use</h1>
         <p class="effective-date">Effective date: March 2026</p>
 
-        <p>These Terms of Use govern your access to and use of ThinkHere, a product of Qanata Labs. By using ThinkHere you agree to these terms. If you do not agree, please do not use the service.</p>
+        <p>These Terms of Use govern your access to and use of ThinkHere, a product of Qanata Labs. By using ThinkHere
+          you agree to these terms. If you do not agree, please do not use the service.</p>
 
         <h2>1. What ThinkHere Is</h2>
-        <p>ThinkHere is a web application that runs AI language models entirely within your browser using WebGPU. No prompts, messages, documents, or outputs are transmitted to any server operated by Qanata Labs or any third party. All inference occurs locally on your device.</p>
+        <p>ThinkHere is a web application that runs AI language models entirely within your browser using WebGPU. No
+          prompts, messages, documents, or outputs are transmitted to any server operated by Qanata Labs or any third
+          party. All inference occurs locally on your device.</p>
 
         <h2>2. Permitted Use</h2>
-        <p>You may use ThinkHere for personal, research, commercial, or educational purposes. You agree not to use ThinkHere to generate content that is unlawful, harmful, fraudulent, or in violation of any applicable law or the rights of others.</p>
+        <p>You may use ThinkHere for personal, research, commercial, or educational purposes. You agree not to use
+          ThinkHere to generate content that is unlawful, harmful, fraudulent, or in violation of any applicable law or
+          the rights of others.</p>
 
         <h2>3. No Data Collection</h2>
-        <p>ThinkHere does not transmit your conversations, documents, or any input to external servers. Conversation history, knowledge base documents, and model cache files are stored locally in your browser's IndexedDB and Cache API. We have no access to this data. Clearing your browser data will permanently delete it.</p>
+        <p>ThinkHere does not transmit your conversations, documents, or any input to external servers. Conversation
+          history, knowledge base documents, and model cache files are stored locally in your browser's IndexedDB and
+          Cache API. We have no access to this data. Clearing your browser data will permanently delete it.</p>
 
         <h2>4. Accounts (app.thinkhere.ai)</h2>
-        <p>The authenticated version of ThinkHere at <a href="https://app.thinkhere.ai">app.thinkhere.ai</a> requires an account. Your account information (email address and subscription status) is stored securely and used only to manage your access to the service. We do not sell or share your account information with third parties, except as required to operate the service (e.g. payment processing via Stripe).</p>
+        <p>The authenticated version of ThinkHere at <a href="https://app.thinkhere.ai">app.thinkhere.ai</a> requires an
+          account. Your account information (email address and subscription status) is stored securely and used only to
+          manage your access to the service. We do not sell or share your account information with third parties, except
+          as required to operate the service (e.g. payment processing via Stripe).</p>
 
         <h2>5. Subscriptions and Payments</h2>
-        <p>Paid features are available through a subscription. Payments are processed by Stripe. Subscription terms, pricing, and cancellation policies are presented at checkout. Refunds are handled on a case-by-case basis — contact us at <a href="mailto:contact@qanatalabs.com">contact@qanatalabs.com</a>.</p>
+        <p>Paid features are available through a subscription. Payments are processed by Stripe. Subscription terms,
+          pricing, and cancellation policies are presented at checkout. Refunds are handled on a case-by-case basis —
+          contact us at <a href="mailto:contact@qanatalabs.com">contact@qanatalabs.com</a>.</p>
 
         <h2>6. AI-Generated Content</h2>
-        <p>ThinkHere runs open-source AI models. Outputs may be inaccurate, incomplete, or inappropriate. You are responsible for how you use AI-generated content. Qanata Labs makes no warranties regarding the accuracy or fitness of model outputs for any particular purpose.</p>
+        <p>ThinkHere runs open-source AI models. Outputs may be inaccurate, incomplete, or inappropriate. You are
+          responsible for how you use AI-generated content. Qanata Labs makes no warranties regarding the accuracy or
+          fitness of model outputs for any particular purpose.</p>
 
         <h2>7. Intellectual Property</h2>
-        <p>The ThinkHere application code is open source under the MIT License. The ThinkHere name, Qanata Labs name, and associated brand assets are the property of Qanata Labs and may not be used without permission. AI models available within ThinkHere are subject to their own respective licenses.</p>
+        <p>The ThinkHere application code is open source under the MIT License. The ThinkHere name, Qanata Labs name,
+          and associated brand assets are the property of Qanata Labs and may not be used without permission. AI models
+          available within ThinkHere are subject to their own respective licenses.</p>
 
         <h2>8. Availability</h2>
-        <p>We aim to keep ThinkHere available but do not guarantee uninterrupted access. We may update, modify, or discontinue features at any time. We will provide reasonable notice of material changes where possible.</p>
+        <p>We aim to keep ThinkHere available but do not guarantee uninterrupted access. We may update, modify, or
+          discontinue features at any time. We will provide reasonable notice of material changes where possible.</p>
 
         <h2>9. Limitation of Liability</h2>
-        <p>ThinkHere is provided "as is" without warranty of any kind. To the fullest extent permitted by law, Qanata Labs shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the service.</p>
+        <p>ThinkHere is provided "as is" without warranty of any kind. To the fullest extent permitted by law, Qanata
+          Labs shall not be liable for any indirect, incidental, special, or consequential damages arising from your use
+          of the service.</p>
 
         <h2>10. Governing Law</h2>
-        <p>These terms are governed by the laws of the jurisdiction in which Qanata Labs operates, without regard to conflict of law principles.</p>
+        <p>These terms are governed by the laws of the jurisdiction in which Qanata Labs operates, without regard to
+          conflict of law principles.</p>
 
         <h2>11. Changes to These Terms</h2>
-        <p>We may update these terms from time to time. Continued use of ThinkHere after changes constitutes acceptance of the updated terms. The effective date at the top of this page reflects when terms were last revised.</p>
+        <p>We may update these terms from time to time. Continued use of ThinkHere after changes constitutes acceptance
+          of the updated terms. The effective date at the top of this page reflects when terms were last revised.</p>
 
         <h2>12. Contact</h2>
-        <p>Questions about these terms? Email us at <a href="mailto:contact@qanatalabs.com">contact@qanatalabs.com</a>.</p>
+        <p>Questions about these terms? Email us at <a href="mailto:contact@qanatalabs.com">contact@qanatalabs.com</a>.
+        </p>
       </div>
     </div>
 
     <footer class="page-footer">
-      &copy; 2026 ThinkHere by <a href="https://www.qanatalabs.com" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Qanata Labs</a> &middot;
+      &copy; 2026 ThinkHere by <a href="https://www.qanatalabs.com" target="_blank" rel="noopener"
+        style="color:inherit;text-decoration:underline;">Qanata Labs</a> &middot;
       <a href="terms.html" style="color:inherit;text-decoration:underline;">Terms</a> &middot;
       <a href="privacy.html" style="color:inherit;text-decoration:underline;">Privacy</a>
     </footer>
@@ -255,10 +302,10 @@
       document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
       document.getElementById('btn-light').classList.toggle('active', t === 'light');
       var strokeCol = t === 'light' ? '#9a9a9a' : '#f4f1eb';
-      document.querySelectorAll('.ql-stroke').forEach(function(el) { el.setAttribute('stroke', strokeCol); });
+      document.querySelectorAll('.ql-stroke').forEach(function (el) { el.setAttribute('stroke', strokeCol); });
       localStorage.setItem('thinkhere-theme', t);
     }
-    (function() {
+    (function () {
       var saved = localStorage.getItem('thinkhere-theme');
       if (saved) setTheme(saved);
     })();
