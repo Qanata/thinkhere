@@ -148,7 +148,7 @@ a.logo-product:hover {
 
 .logo-parent-text {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 13.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-dim);
