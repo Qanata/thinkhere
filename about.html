@@ -186,8 +186,10 @@
 
     .arch-columns {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
+      max-width: 720px;
+      margin: 0 auto;
     }
 
     .arch-card {
@@ -456,7 +458,8 @@
     /* Responsive */
     @media (max-width: 900px) {
       .arch-columns {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        max-width: 480px;
       }
     }
 
@@ -578,9 +581,9 @@
 
       <!-- How It Works — Three Architectures -->
       <section class="how-section">
-        <h2 class="section-title">Three paths to <em>in-browser</em> AI</h2>
-        <p class="how-description">ThinkHere supports three different inference backends, each with its own trade-offs.
-          All three use WebGPU for GPU acceleration, and all model weights are cached in your browser after the first
+        <h2 class="section-title">Two paths to <em>in-browser</em> AI</h2>
+        <p class="how-description">ThinkHere supports two inference backends, each with its own trade-offs.
+          Both use WebGPU for GPU acceleration, and all model weights are cached in your browser after the first
           download.</p>
 
         <div class="arch-columns">
@@ -616,7 +619,7 @@
               <li>Model must be specifically compiled for MLC</li>
             </ul>
             <p class="arch-label">Used by</p>
-            <p>SmolLM2 360M, SmolLM2 1.7B, Qwen3 4B, Mistral 7B, Llama 3.2 1B</p>
+            <p>SmolLM2 1.7B, Mistral 7B, Llama 3.2 1B</p>
           </div>
           <div class="arch-card">
             <h4>Transformers.js + ONNX Runtime Web</h4>
@@ -654,43 +657,11 @@
               <li>Slightly more overhead than pre-compiled kernels</li>
             </ul>
             <p class="arch-label">Used by</p>
-            <p>Qwen3.5 0.8B, Qwen3.5 2B, Qwen3.5 4B</p>
+            <p>Gemma 4 E2B, Gemma 4 E4B, Qwen3.5 0.8B, Qwen3.5 2B, Qwen3.5 4B</p>
           </div>
-          <div class="arch-card">
-            <h4>MediaPipe + LiteRT</h4>
-            <div class="arch-flow">
-              <div class="arch-flow-step">HuggingFace<span class="step-sub">LiteRT model file (.litertlm)</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
-                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
-                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                </svg></div>
-              <div class="arch-flow-step highlight">MediaPipe GenAI<span class="step-sub">LLM Inference API</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
-                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
-                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                </svg></div>
-              <div class="arch-flow-step">WebGPU Compute<span class="step-sub">Multimodal: text + images</span></div>
-              <div class="arch-flow-arrow"><svg viewBox="0 0 12 18">
-                  <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5" />
-                  <polyline points="2.5,9.5 6,14 9.5,9.5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                </svg></div>
-              <div class="arch-flow-step step-end">Your GPU</div>
-            </div>
-            <p>Google's <strong>MediaPipe LLM Inference</strong> API loads Gemma models in the <strong>LiteRT</strong>
-              format (formerly TFLite). Supports multimodal input — text and images — all processed on-device via
-              WebGPU. Available at <a href="https://app.thinkhere.ai"
-                style="color: var(--accent); text-decoration: none;">app.thinkhere.ai</a> with a free account.</p>
-            <div class="arch-label">Trade-offs</div>
-            <ul>
-              <li>Multimodal: text and image input</li>
-              <li>Single large file download (no split shards)</li>
-              <li>Requires WebGPU — no WASM fallback</li>
-            </ul>
-            <p class="arch-label">Used by</p>
-            <p>Gemma 3n E2B, Gemma 3n E4B (logged-in tier)</p>
-          </div>
+
         </div>
-        <div class="arch-shared">All three methods use WebGPU for GPU acceleration. All model weights are cached in your
+        <div class="arch-shared">Both methods use WebGPU for GPU acceleration. All model weights are cached in your
           browser after the first download — no server involved.</div>
       </section>
 
