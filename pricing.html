@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing | ThinkHere</title>
+  <meta name="description" content="ThinkHere pricing. Private AI that runs entirely in your browser, on every plan. Start free with no account.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Pricing page overrides (uses tokens from css/style.css) ── */
+    html { scroll-behavior: smooth; }
+
+    .page-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .page-nav.active { color: var(--accent); }
+
+    .pricing-main {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .pricing-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 64px 24px 40px;
+    }
+
+    /* Hero */
+    .pricing-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 18px;
+      margin-bottom: 52px;
+      animation: fadeUp 0.55s ease both;
+    }
+
+    .pricing-hero h1 {
+      font-family: var(--font-sans);
+      font-size: clamp(2rem, 4.6vw, 3rem);
+      font-weight: 300;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: var(--hero-h);
+    }
+
+    .pricing-hero h1 em {
+      color: var(--hero-em);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .pricing-hero p {
+      color: var(--text-muted);
+      max-width: 540px;
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    .pricing-hero .intro-subtitle { margin-top: -4px; }
+
+    /* Billing switch */
+    .billing-switch {
+      display: flex;
+      width: fit-content;
+      margin: 0 auto 40px;
+      background: var(--surface2);
+      border: 1px solid var(--border-md);
+      border-radius: 20px;
+      padding: 3px;
+    }
+
+    .billing-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 18px;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .billing-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+
+    .save-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 100px;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .currency-note {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
+      color: var(--text-dim);
+      margin: -52px 0 72px;
+    }
+
+    /* Tier cards */
+    .tiers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 72px;
+    }
+
+    .tier {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border-md);
+      border-radius: 14px;
+      padding: 28px 24px 26px;
+      box-shadow: 0 2px 14px var(--shadow);
+    }
+
+    .tier.pro {
+      border-color: rgba(184, 92, 56, 0.55);
+      box-shadow: 0 0 0 3px var(--accent-glow), 0 2px 14px var(--shadow);
+    }
+
+    .tier-flag {
+      position: absolute;
+      top: -11px;
+      left: 24px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .tier-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .tier.pro .tier-label { color: var(--accent); }
+
+    .tier-for {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      min-height: 42px;
+      margin-bottom: 22px;
+    }
+
+    .tier-price {
+      font-family: var(--font-sans);
+      font-size: 2.6rem;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      color: var(--hero-h);
+      line-height: 1;
+    }
+
+    .tier-price b { font-weight: 300; }
+
+    .tier-price span {
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    .tier-price-note {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
+      color: var(--text-dim);
+      margin: 10px 0 22px;
+    }
+
+    .tier .btn-top-ghost,
+    .tier .btn-top-solid {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 11px 16px;
+      font-size: 13.5px;
+      margin-bottom: 24px;
+    }
+
+    .tier-includes {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .tier-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .tier-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .tier-list .check {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      font-size: 0.65rem;
+      margin-top: 1px;
+    }
+
+    /* Section headings */
+    .p-section { margin-bottom: 72px; }
+
+    .p-section-head {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .p-section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .p-section-head h2 {
+      font-size: clamp(24px, 2.6vw, 32px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--hero-h);
+      margin-bottom: 10px;
+    }
+
+    .p-section-head h2 em {
+      color: var(--hero-em);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .p-section-head p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* Comparison table (matches guide.html tier table) */
+    .tier-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+    }
+
+    .tier-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 560px;
+    }
+
+    .tier-table thead { background: var(--surface2); }
+
+    .tier-table th {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tier-table th:not(:first-child) { text-align: center; width: 17%; }
+    .tier-table th.pro-col { color: var(--accent); }
+
+    .tier-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .tier-table td:not(:first-child) { text-align: center; }
+    .tier-table tbody tr:last-child td { border-bottom: none; }
+    .tier-table tbody tr:not(.group-row):hover { background: var(--surface); }
+
+    .tier-table .feature-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .tier-table .feature-sub {
+      display: block;
+      font-weight: 400;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .tier-table .group-row td {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--surface);
+      padding: 10px 16px;
+      text-align: left;
+    }
+
+    .check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(184, 92, 56, 0.12);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .dash {
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+
+    /* Sensitive work (matches homepage pillar row) */
+    .pricing-inner .pillar-row { max-width: none; margin-top: 0; }
+    .pricing-inner .pillar { padding: 20px 20px; }
+
+    .caveat {
+      margin-top: 16px;
+      background: var(--surface2);
+      border-left: 3px solid var(--accent);
+      padding: 16px 22px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .caveat strong { color: var(--text); font-weight: 600; }
+
+    /* Device requirements (matches guide.html) */
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .req-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .req-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .req-value {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .req-value span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* FAQ */
+    .faq {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .faq details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.15s;
+    }
+
+    .faq details[open] { border-color: var(--border-md); }
+
+    .faq summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 20px;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .faq summary::-webkit-details-marker { display: none; }
+
+    .faq summary::after {
+      content: '+';
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .faq details[open] summary::after { content: '\2212'; }
+
+    .faq details p {
+      padding: 0 20px 18px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .faq details p a { color: var(--accent); text-decoration: none; }
+
+    /* Closing CTA */
+    .closing {
+      text-align: center;
+      padding: 44px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border-md);
+      border-radius: 14px;
+      margin-bottom: 24px;
+    }
+
+    .closing h2 {
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--hero-h);
+      margin-bottom: 20px;
+    }
+
+    .closing h2 em { color: var(--hero-em); font-style: normal; font-weight: 600; }
+
+    .closing-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 860px) {
+      .tiers, .req-grid { grid-template-columns: 1fr; }
+      .tier-for { min-height: 0; }
+      .pricing-inner .pillar-row { flex-direction: column; }
+      .pricing-inner .pillar-sep { width: auto; height: 1px; margin: 0 14px; }
+    }
+
+    @media (max-width: 680px) {
+      .pricing-inner { padding: 40px 16px 32px; }
+      .page-header-right .page-theme-toggle,
+      .page-header-right .btn-top-ghost { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrap">
+    <header class="page-header">
+      <a class="page-header-logo" href="/">
+        ThinkHere
+      </a>
+      <div class="page-header-right">
+        <a class="page-nav" href="about.html">About</a>
+        <a class="page-nav" href="blog.html">Blog</a>
+        <a class="page-nav" href="guide.html">Guide</a>
+        <a class="page-nav active" href="pricing.html">Pricing</a>
+        <div class="page-theme-toggle">
+          <button class="page-theme-btn active" id="btn-dark" onclick="setTheme('dark')" aria-label="Dark theme">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+            </svg>
+          </button>
+          <button class="page-theme-btn" id="btn-light" onclick="setTheme('light')" aria-label="Light theme">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+              <path
+                d="M12 2v2M12 20v2M2 12h2M20 12h2M5.63 5.63l1.41 1.41M16.96 16.96l1.41 1.41M5.63 18.37l1.41-1.41M16.96 7.04l1.41-1.41"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+        <a class="btn-top-ghost" href="#" onclick="signIn(); return false;">Sign In</a>
+        <a class="btn-top-solid" href="https://app.thinkhere.ai/?mode=signup">Create Account</a>
+      </div>
+    </header>
+
+    <main class="pricing-main">
+      <div class="bg-orb orb1"></div>
+      <div class="bg-orb orb2"></div>
+
+      <div class="pricing-inner">
+
+        <!-- Hero -->
+        <section class="pricing-hero">
+          <div class="eyebrow"><span class="eyebrow-dot"></span>Qanata Labs &middot; Pricing</div>
+          <h1>Private at <em>every</em> tier</h1>
+          <div class="intro-subtitle">No cloud inference on any plan</div>
+          <p>Privacy is architectural, not just policy-based. Whichever plan you choose, the AI runs on your device
+            and your conversations never leave it. Paying changes your features, not where your data goes.</p>
+        </section>
+
+        <!-- Billing switch -->
+        <div class="billing-switch" role="group" aria-label="Billing period">
+          <button class="billing-btn active" id="bill-monthly" onclick="setBilling('monthly')">Monthly</button>
+          <button class="billing-btn" id="bill-yearly" onclick="setBilling('yearly')">Yearly <span class="save-pill">Save 20%</span></button>
+        </div>
+
+        <!-- Tier cards -->
+        <section class="tiers" aria-label="Plans">
+
+          <div class="tier">
+            <div class="tier-label">No account</div>
+            <div class="tier-for">Try private AI straight away. No sign-up, no email.</div>
+            <div class="tier-price">$0</div>
+            <div class="tier-price-note">Free forever &middot; MIT open source</div>
+            <a class="btn-top-ghost" href="/">Start now</a>
+            <div class="tier-includes">Includes</div>
+            <ul class="tier-list">
+              <li><span class="check">&#10003;</span>One fast text model</li>
+              <li><span class="check">&#10003;</span>Upload text files and ask questions about them</li>
+              <li><span class="check">&#10003;</span>Conversation history and saving</li>
+            </ul>
+          </div>
+
+          <div class="tier">
+            <div class="tier-label">Free account</div>
+            <div class="tier-for">The full model library and more ways to work with your files.</div>
+            <div class="tier-price">$0</div>
+            <div class="tier-price-note">Just your name and email</div>
+            <a class="btn-top-ghost" href="https://app.thinkhere.ai/?mode=signup">Create free account</a>
+            <div class="tier-includes">Everything in No account, plus</div>
+            <ul class="tier-list">
+              <li><span class="check">&#10003;</span>All 8 AI models, including ones that read images</li>
+              <li><span class="check">&#10003;</span>Upload images and audio</li>
+              <li><span class="check">&#10003;</span>Export your conversations</li>
+              <li><span class="check">&#10003;</span>Longer conversations without losing track</li>
+            </ul>
+          </div>
+
+          <div class="tier pro">
+            <div class="tier-flag">For professional work</div>
+            <div class="tier-label">Pro</div>
+            <div class="tier-for">Answers grounded in your own documents, set up the way you work.</div>
+            <div class="tier-price"><b id="pro-amt">$7.95</b><span id="pro-per">/ month</span></div>
+            <div class="tier-price-note" id="pro-note">Billed monthly &middot; cancel anytime</div>
+            <a class="btn-top-solid" href="https://app.thinkhere.ai/?mode=signup">Upgrade to Pro</a>
+            <div class="tier-includes">Everything in Free account, plus</div>
+            <ul class="tier-list">
+              <li><span class="check">&#10003;</span>Answers from your own documents, stored on your device</li>
+              <li><span class="check">&#10003;</span>Custom instructions so every answer fits your role</li>
+              <li><span class="check">&#10003;</span>Voice transcription, processed locally</li>
+              <li><span class="check">&#10003;</span>Control over how creative or precise answers are</li>
+            </ul>
+          </div>
+
+        </section>
+        <p class="currency-note">All prices in US dollars.</p>
+
+        <!-- Comparison -->
+        <section class="p-section" id="compare">
+          <div class="p-section-head">
+            <span class="p-section-label">Compare plans</span>
+            <h2>Every feature runs <em>on your device</em></h2>
+            <p>On every plan, for every model. Nothing you type is sent to a server.</p>
+          </div>
+
+          <div class="tier-table-wrap">
+            <table class="tier-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>No account</th>
+                  <th>Free account</th>
+                  <th class="pro-col">Pro</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="4">Models</td></tr>
+                <tr>
+                  <td class="feature-name">Fast text model<span class="feature-sub">SmolLM2 1.7B</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">All 8 models<span class="feature-sub">Including models that read images and PDFs</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+
+                <tr class="group-row"><td colspan="4">Your conversations</td></tr>
+                <tr>
+                  <td class="feature-name">Conversation history and saving</td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Conversation export</td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Long conversation memory<span class="feature-sub">Keeps track of longer chats</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+
+                <tr class="group-row"><td colspan="4">Your files</td></tr>
+                <tr>
+                  <td class="feature-name">Text file upload</td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Image and audio upload</td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Answers from your own documents<span class="feature-sub">A knowledge base that stays on your device</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+
+                <tr class="group-row"><td colspan="4">Control</td></tr>
+                <tr>
+                  <td class="feature-name">Custom instructions<span class="feature-sub">Tell the AI your role and how to respond</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Creativity settings<span class="feature-sub">More creative or more precise answers</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+                <tr>
+                  <td class="feature-name">Voice transcription<span class="feature-sub">Processed on your device</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="dash">&ndash;</span></td>
+                  <td><span class="check">&#10003;</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Sensitive work -->
+        <section class="p-section" id="sensitive-work">
+          <div class="p-section-head">
+            <span class="p-section-label">Use cases</span>
+            <h2>How professionals <em>use ThinkHere</em></h2>
+            <p>A few examples of everyday tasks, all run by AI on your own machine. Always follow your organisation's policies on AI and data.</p>
+          </div>
+
+          <div class="pillar-row">
+            <div class="pillar">
+              <div class="p-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7h14M5 7l-3 6a3 3 0 006 0L5 7zM19 7l-3 6a3 3 0 006 0l-3-6z"/></svg>
+              </div>
+              <div>
+                <span class="p-title">Legal</span>
+                <span class="p-desc">Draft letters, summarise long documents, and review contracts with AI that runs on your own machine.</span>
+              </div>
+            </div>
+            <div class="pillar-sep"></div>
+            <div class="pillar">
+              <div class="p-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+              <div>
+                <span class="p-title">Healthcare</span>
+                <span class="p-desc">Summarise research papers, draft reports, and prepare for meetings, all processed locally in your browser.</span>
+              </div>
+            </div>
+            <div class="pillar-sep"></div>
+            <div class="pillar">
+              <div class="p-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              </div>
+              <div>
+                <span class="p-title">Business and finance</span>
+                <span class="p-desc">Draft board papers, analyse reports, and work on strategy without sending documents to a cloud AI service.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="caveat">
+            <strong>For your IT and compliance team:</strong> ThinkHere runs AI locally in the browser, but it does
+            not replace your organisation's own policies on AI use, device security, or data governance. The code is
+            open source under the MIT licence, so your team can review exactly how it works before you use it.
+          </div>
+        </section>
+
+        <!-- Device check -->
+        <section class="p-section" id="device">
+          <div class="p-section-head">
+            <span class="p-section-label">Before you upgrade</span>
+            <h2>Check your <em>device</em></h2>
+            <p>ThinkHere runs on your own hardware, so make sure it can before you pay.</p>
+          </div>
+
+          <div class="req-grid">
+            <div class="req-item">
+              <div class="req-label">Browser</div>
+              <div class="req-value">Chrome 113+, Edge 113+, Safari 18+<span>Firefox is not supported yet</span></div>
+            </div>
+            <div class="req-item">
+              <div class="req-label">Memory</div>
+              <div class="req-value">8 GB RAM or more<span>16 GB+ recommended for the larger models</span></div>
+            </div>
+            <div class="req-item">
+              <div class="req-label">Device</div>
+              <div class="req-value">Desktop or laptop<span>iPhone is not supported</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="p-section" id="faq">
+          <div class="p-section-head">
+            <span class="p-section-label">Questions</span>
+            <h2>Before you <em>decide</em></h2>
+          </div>
+
+          <div class="faq">
+            <details>
+              <summary>Do I need an account to use ThinkHere?</summary>
+              <p>No. Open thinkhere.ai in a supported browser and start chatting straight away. A free account
+                unlocks all 8 models, image and audio upload, and conversation export.</p>
+            </details>
+            <details>
+              <summary>Does upgrading change where my data goes?</summary>
+              <p>No. Every plan runs the AI on your device. Your account only manages your settings and which
+                features you can use. It plays no part in answering your questions.</p>
+            </details>
+            <details>
+              <summary>Is ThinkHere really private?</summary>
+              <p>Yes, and you don't have to take our word for it. The code is open source, and you can watch your
+                browser's network activity while you chat. You will see no outbound requests during a
+                conversation.</p>
+            </details>
+            <details>
+              <summary>Who can read my conversations?</summary>
+              <p>Nobody at Qanata Labs. Conversations are stored in your browser, on your device, and never reach
+                our servers.</p>
+            </details>
+            <details>
+              <summary>Why is there a download the first time?</summary>
+              <p>The AI model has to live on your device to run there. The first load downloads it once. After
+                that it opens from your browser's cache in seconds.</p>
+            </details>
+            <details>
+              <summary>Can I cancel Pro?</summary>
+              <p>Yes, anytime. You keep everything in the free account, and your conversations stay on your
+                device.</p>
+            </details>
+            <details>
+              <summary>Where can I find more help?</summary>
+              <p>The <a href="guide.html">Guide</a> covers setup, models, device support and troubleshooting in
+                detail.</p>
+            </details>
+          </div>
+        </section>
+
+        <!-- Closing CTA -->
+        <section class="closing">
+          <h2>Start private. <em>Upgrade when it earns it.</em></h2>
+          <div class="closing-actions">
+            <a class="btn-top-ghost" href="/">Try it now, no account</a>
+            <a class="btn-top-solid" href="https://app.thinkhere.ai/?mode=signup">Create free account</a>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <div class="footer-trust">
+      <span class="trust-pill">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        Secure
+      </span>
+      <span class="trust-dot"></span>
+      <span class="trust-pill">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        Private
+      </span>
+      <span class="trust-dot"></span>
+      <span class="trust-pill">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4l3 3" />
+        </svg>
+        Confidential
+      </span>
+    </div>
+    <p class="legal" style="padding-bottom:24px;">
+      By using ThinkHere you agree to our <a href="terms.html">Terms of Use</a>, <a href="privacy.html">Privacy
+        Policy</a> and <a href="usage.html">Usage Policies</a> &middot; A <a href="https://www.qanatalabs.com"
+        target="_blank" rel="noopener">Qanata Labs</a> product
+    </p>
+
+  </div>
+  <script>
+    function setBilling(period) {
+      var yearly = period === 'yearly';
+      document.getElementById('bill-monthly').classList.toggle('active', !yearly);
+      document.getElementById('bill-yearly').classList.toggle('active', yearly);
+      document.getElementById('pro-amt').textContent = yearly ? '$76' : '$7.95';
+      document.getElementById('pro-per').textContent = yearly ? '/ year' : '/ month';
+      document.getElementById('pro-note').innerHTML = yearly
+        ? '$6.33/mo &middot; billed annually'
+        : 'Billed monthly &middot; cancel anytime';
+    }
+
+    function setTheme(t) {
+      document.documentElement.setAttribute('data-theme', t);
+      document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
+      document.getElementById('btn-light').classList.toggle('active', t === 'light');
+      try { localStorage.setItem('thinkhere-theme', t); } catch (e) {}
+    }
+    (function () {
+      try {
+        var saved = localStorage.getItem('thinkhere-theme');
+        if (saved) setTheme(saved);
+      } catch (e) {}
+    })();
+  </script>
+  <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>
