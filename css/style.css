@@ -28,6 +28,7 @@
   --orb2: rgba(184, 92, 56, 0.05);
   --shadow: rgba(0, 0, 0, 0.15);
   --accent: #b85c38;
+  --terra: #b85c38;
   --accent-dim: #9a4a2d;
   --accent-glow: rgba(184, 92, 56, 0.10);
   --user-bg: #1e1a16;
@@ -64,6 +65,7 @@
   --orb2: rgba(184, 92, 56, 0.03);
   --shadow: rgba(0, 0, 0, 0.08);
   --accent: #b85c38;
+  --terra: #b85c38;
   --accent-dim: #9e3f1a;
   --accent-glow: rgba(184, 92, 56, 0.08);
   --user-bg: #f5ede8;
